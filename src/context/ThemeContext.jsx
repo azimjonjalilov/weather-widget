@@ -3,10 +3,10 @@ import { createContext, useContext, useState, useEffect } from "react";
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState("light");
+  const [theme, setTheme] = useState("dark");
 
   useEffect(() => {
-    document.body.setAttribute("data-theme", theme); // <--- Yaxshiroq yondashuv
+    document.body.setAttribute("data-theme", theme);
   }, [theme]);
 
   const toggleTheme = () => {

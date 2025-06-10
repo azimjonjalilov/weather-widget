@@ -75,7 +75,7 @@ const DataVisualization = ({ data, unit }) => {
                 textAnchor="middle"
                 fill="#333"
               >
-                {p.temp_avg.toFixed(1)}
+                {p.temp_avg.toFixed(1)} {unit === "metric" ? "C" : "F"}
               </text>
               <text
                 x={p.x}

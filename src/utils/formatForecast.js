@@ -11,7 +11,7 @@ const formatForecastForChart = (forecast) => {
 
   return forecast.map((dayData) => {
     const date = new Date(dayData.date);
-    const dayName = weekdays[date.getDay()]; // 0–6
+    const dayName = weekdays[date.getDay()];
 
     return {
       day: dayName,

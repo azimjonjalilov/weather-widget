@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { useWeatherData } from "../../hooks/useWeatherData";
-
-import Header from "../header/Header";
-import WeatherDisplay from "../weatherDisplay/WeatherDisplay";
-import CitySelector from "../citySelector/CitySelector";
-import ForecastList from "../forecastList/ForecastList";
-import DataVisualization from "../dataVisualization/DataVisualization";
-import SettingsPanel from "../settingsPanel/SettingsPanel";
-
 import styles from "./WeatherWidget.module.css";
 import { MdSettingsSuggest } from "react-icons/md";
 
+// import components
+import Header from "../header/Header";
+import CitySelector from "../citySelector/CitySelector";
+import WeatherDisplay from "../weatherDisplay/WeatherDisplay";
+import ForecastList from "../forecastList/ForecastList";
+import DataVisualization from "../dataVisualization/DataVisualization";
+import SettingsPanel from "../settingsPanel/SettingsPanel";
+import Loading from "../loading/Loading";
+
 const WeatherWidget = () => {
-  const [refreshInterval, setRefreshInterval] = useState(5);
   const [isSetting, setIsSetting] = useState(false);
   const {
     city,
@@ -23,16 +23,9 @@ const WeatherWidget = () => {
     error,
     changeCity,
     toggleUnit,
+    loading,
     reload,
   } = useWeatherData();
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      reload();
-    }, refreshInterval * 3000);
-
-    return () => clearInterval(intervalId);
-  }, [refreshInterval, reload]);
 
   return (
     <div className={styles.container}>
@@ -49,21 +42,21 @@ const WeatherWidget = () => {
       </div>
       <SettingsPanel
         isSetting={isSetting}
+        setIsSetting={setIsSetting}
         unit={unit}
         toggleUnit={toggleUnit}
         reload={reload}
-        refreshInterval={refreshInterval}
-        setRefreshInterval={setRefreshInterval}
       />
 
-      {weatherData ? (
+      {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
+      {loading && <Loading />}
+
+      {!loading && weatherData && (
         <>
           <WeatherDisplay data={weatherData} unit={unit} cityData={cityData} />
           <ForecastList forecast={forecastData.slice(1)} unit={unit} />
           <DataVisualization data={forecastData.slice(1)} unit={unit} />
         </>
-      ) : (
-        <p>Yuklanmoqda...</p>
       )}
     </div>
   );

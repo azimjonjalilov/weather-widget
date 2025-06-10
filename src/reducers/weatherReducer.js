@@ -4,6 +4,7 @@ import {
   TOGGLE_UNIT,
   SET_ERROR,
   CLEAR_ERROR,
+  SET_LOADING,
 } from "./actionTypes";
 
 export const initialState = {
@@ -11,7 +12,9 @@ export const initialState = {
   cityData: null,
   unit: "metric", // 'metric' = Celsius, 'imperial' = Fahrenheit
   weatherData: null,
+  forecastData: null,
   error: null,
+  loading: false,
 };
 
 export function weatherReducer(state, action) {
@@ -73,12 +76,14 @@ export function weatherReducer(state, action) {
         weatherData: list[0],
         forecastData,
         error: null,
+        loading: false,
       };
 
     case CHANGE_CITY:
       return {
         ...state,
         city: action.payload,
+        loading: true,
       };
 
     case TOGGLE_UNIT:
@@ -91,6 +96,7 @@ export function weatherReducer(state, action) {
       return {
         ...state,
         error: action.payload,
+        loading: false,
       };
 
     case CLEAR_ERROR:
@@ -98,6 +104,8 @@ export function weatherReducer(state, action) {
         ...state,
         error: null,
       };
+    case SET_LOADING:
+      return { ...state, loading: true };
 
     default:
       return state;

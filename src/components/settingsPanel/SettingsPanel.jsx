@@ -1,24 +1,23 @@
-import React, { useState } from "react";
+import React, { useRef } from "react";
 import styles from "./SettingsPanel.module.css";
 
 const SettingsPanel = ({
   isSetting,
+  setIsSetting,
   unit,
   toggleUnit,
   reload,
-  refreshInterval,
-  setRefreshInterval,
 }) => {
-  const [intervalInput, setIntervalInput] = useState(refreshInterval);
+  const refreshInpRef = useRef();
 
-  const handleIntervalChange = (e) => {
-    const value = parseInt(e.target.value);
-    setIntervalInput(value);
-    if (!isNaN(value)) {
-      setRefreshInterval(value);
-    }
+  const handleReload = () => {
+    const time = +refreshInpRef.current.value;
+    console.log(time);
+
+    reload(time);
+    refreshInpRef.current.value = "";
+    setIsSetting(false);
   };
-
   return (
     <div className={`${styles.container} ${isSetting ? styles.active : ""}`}>
       <div className={styles.content}>
@@ -31,15 +30,10 @@ const SettingsPanel = ({
 
         <div className={styles.setting}>
           <label>Yangilanish oraliği (sekund): </label>
-          <input
-            type="number"
-            value={intervalInput}
-            onChange={handleIntervalChange}
-            min="5"
-          />
+          <input ref={refreshInpRef} type="number" min="5" />
         </div>
         <div className={styles.setting}>
-          <button onClick={reload}>Qayta yuklash</button>
+          <button onClick={handleReload}>Qayta yuklash</button>
         </div>
       </div>
     </div>

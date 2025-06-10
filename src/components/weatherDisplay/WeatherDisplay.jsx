@@ -1,9 +1,6 @@
-import React from "react";
 import styles from "./WeatherDisplay.module.css";
 
 const WeatherDisplay = ({ data, unit, cityData }) => {
-  if (!data) return <p>Ma'lumotlar yuklanmoqda...</p>;
-
   const {
     dt_txt,
     main: { temp, feels_like, humidity, pressure },

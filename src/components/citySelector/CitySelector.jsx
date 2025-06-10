@@ -2,8 +2,11 @@ import React, { useState, useEffect, useMemo } from "react";
 import styles from "./CitySelector.module.css";
 import { debounce } from "../../utils/debounce";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa6";
+import { cityData } from "../../data/cityData";
 
-const cities = ["London", "New York", "Tokyo", "Sydney", "Cairo"];
+const cities = cityData
+  .filter((city) => city.country == "UZ")
+  .map((c) => c.name);
 
 export default function CitySelector({ city, changeCity }) {
   const [search, setSearch] = useState("");
@@ -31,9 +34,13 @@ export default function CitySelector({ city, changeCity }) {
   };
 
   const onSelect = (selectedCity) => {
-    changeCity(selectedCity);
     setSearch(selectedCity);
     setShowList(false);
+  };
+
+  const onSubmit = () => {
+    changeCity(search);
+    setSearch("");
   };
 
   return (
@@ -60,9 +67,9 @@ export default function CitySelector({ city, changeCity }) {
         )}
         {showList && (
           <ul className={styles.list}>
-            {filteredCities.map((c) => (
+            {filteredCities.map((c, i) => (
               <li
-                key={c}
+                key={i}
                 onClick={() => onSelect(c)}
                 className={c === city ? styles.selected : ""}
               >
@@ -73,7 +80,9 @@ export default function CitySelector({ city, changeCity }) {
           </ul>
         )}
       </div>
-      <button className={styles.btn}>Submit</button>
+      <button className={styles.btn} onClick={onSubmit}>
+        Submit
+      </button>
     </div>
   );
 }
