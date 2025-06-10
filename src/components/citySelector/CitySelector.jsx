@@ -37,6 +37,7 @@ export default function CitySelector({ city, changeCity }) {
   const onSubmit = () => {
     changeCity(search);
     setSearch("");
+    setShowList(false);
   };
 
   return (
