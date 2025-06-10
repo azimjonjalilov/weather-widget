@@ -6,7 +6,6 @@
   position: relative;
   height: 0;
   overflow: hidden;
-  transition: all 0.3s ease-in-out;
   clip-path: polygon(0 0, 100% 0, 100% 0%, 0 0%);
 }
 
@@ -18,6 +17,7 @@
   display: flex;
   align-items: flex-end;
   gap: 26px;
+  flex-wrap: wrap;
 }
 
 .active {
@@ -68,4 +68,60 @@
 .setting input:focus {
   outline: none;
   border-color: var(--accent-color);
+}
+
+/* --------- Media Queries --------- */
+
+@media (max-width: 1023px) {
+  .content {
+    gap: 20px;
+    padding: 10px 20px;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .setting button,
+  .setting input {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 767px) {
+  .content {
+    gap: 16px;
+    padding: 8px 16px;
+    flex-direction: column;
+  }
+
+  .setting:last-child {
+    margin-left: auto;
+  }
+
+  .active {
+    min-height: 90px;
+    height: auto;
+  }
+
+  .setting {
+    width: 100%;
+  }
+  .setting button,
+  .setting input {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    padding: 6px 12px;
+    gap: 12px;
+  }
+
+  .setting button,
+  .setting input {
+    font-size: 0.85rem;
+    padding: 8px 10px;
+  }
 }

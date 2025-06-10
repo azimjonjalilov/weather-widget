@@ -27,3 +27,51 @@
     transform: rotate(360deg);
   }
 }
+
+@media (max-width: 1023px) {
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border-width: 5px;
+  }
+
+  .text {
+    font-size: 15px;
+  }
+
+  .wrapper {
+    height: 25dvh;
+  }
+}
+
+@media (max-width: 767px) {
+  .spinner {
+    width: 35px;
+    height: 35px;
+    border-width: 4px;
+  }
+
+  .text {
+    font-size: 14px;
+  }
+
+  .wrapper {
+    height: 20dvh;
+  }
+}
+
+@media (max-width: 480px) {
+  .spinner {
+    width: 30px;
+    height: 30px;
+    border-width: 3px;
+  }
+
+  .text {
+    font-size: 13px;
+  }
+
+  .wrapper {
+    height: 18dvh;
+  }
+}

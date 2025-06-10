@@ -4,4 +4,23 @@
   width: 100%;
   min-height: 100dvh;
   background-color: var(--header-bg);
+  padding: 2.5rem;
+}
+
+@media (max-width: 1023px) {
+  .app {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .app {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 479px) {
+  .app {
+    padding: 1rem;
+  }
 }
