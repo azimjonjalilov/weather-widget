@@ -65,9 +65,8 @@ npm run dev
 
 ## 📈 Future Improvements
 
-- Add forecast charts (7-day trend)
-- Support for multiple languages
-- Allow saving favorite cities
+- Add forecast charts (5-day trend)
+- Allow selecting favorite cities
 - Unit toggle (°C / °F)
 
 ---
