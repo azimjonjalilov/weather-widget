@@ -8,7 +8,7 @@ import {
   CLEAR_ERROR,
 } from "../reducers/actionTypes";
 
-import { fetchWeatherData } from "../services/weatherService"; // bu API yoki mock’ni chaqiradi
+import { fetchWeatherAPI } from "../services/weatherService";
 
 export function useWeatherData() {
   const [state, dispatch] = useReducer(weatherReducer, initialState);
@@ -17,7 +17,7 @@ export function useWeatherData() {
     try {
       dispatch({ type: CLEAR_ERROR });
 
-      const data = await fetchWeatherData(state.city, state.unit);
+      const data = await fetchWeatherAPI(state.city, state.unit);
 
       dispatch({
         type: FETCH_WEATHER,
@@ -44,7 +44,7 @@ export function useWeatherData() {
   };
 
   return {
-    ...state, // city, unit, weatherData, error
+    ...state, // city, unit, cityData, weatherData, error
     changeCity, // funksiyalar
     toggleUnit,
     reload: loadWeather,

@@ -1,0 +1,40 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 32px;
+  background-color: var(--header-bg);
+  color: var(--text-color);
+  width: 100%;
+}
+
+a {
+  text-decoration: none;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: inherit;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--accent-color);
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.icon {
+  font-size: 1.5rem;
+  color: var(--icon-color);
+}

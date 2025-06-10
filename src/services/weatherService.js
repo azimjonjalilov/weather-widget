@@ -1,19 +1,24 @@
-// services/weatherService.js
+const API_KEY = import.meta.env.VITE_OWM_API_KEY;
 
-import mockWeatherData from "../data/mockWeatherData";
-
-export const fetchWeatherData = async (city, unit) => {
-  // unit hozircha ishlatilmayapti, lekin real API uchun kerak bo'ladi
-  const result = mockWeatherData.find(
-    (item) => item.name.toLowerCase() === city.toLowerCase()
-  );
-
-  if (!result) {
-    throw new Error("Shahar topilmadi");
+export async function fetchWeatherAPI(city, unit = "metric") {
+  if (!API_KEY) {
+    throw new Error(
+      "API key is not set. Please set VITE_OWM_API_KEY in .env file."
+    );
   }
 
-  // Delay simulyatsiya qilish (ixtiyoriy)
-  await new Promise((res) => setTimeout(res, 500));
+  const url = `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(
+    city
+  )}&units=${unit}&appid=${API_KEY}`;
 
-  return result;
-};
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Failed to fetch weather data");
+  }
+
+  const data = await response.json();
+
+  return { list: data.list, city: data.city };
+}

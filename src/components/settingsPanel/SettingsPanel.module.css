@@ -1,16 +1,71 @@
-.panel {
-  border: 1px solid #ccc;
-  padding: 1rem;
-  border-radius: 8px;
-  margin-top: 1rem;
-  background-color: #f7f7f7;
+.container {
+  background-color: var(--header-bg);
+  color: var(--text-color);
+  transition: all 0.3s ease-in-out;
+  width: 100%;
+  position: relative;
+  height: 0;
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
+  clip-path: polygon(0 0, 100% 0, 100% 0%, 0 0%);
+}
+
+.content {
+  padding: 10px 24px;
+  transition: all 0.3s ease-in-out;
+  width: 100%;
+  background-color: var(--header-bg);
+  display: flex;
+  align-items: flex-end;
+  gap: 26px;
+}
+
+.active {
+  height: 87px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
 }
 
 .setting {
-  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.setting:last-child {
+  margin-left: auto;
 }
 
 .setting label {
-  margin-right: 0.5rem;
-  font-weight: bold;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.setting button {
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.setting button:hover {
+  background-color: #0b5ed7;
+}
+
+.setting input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: var(--body-bg);
+  color: var(--text-color);
+  font-size: 0.95rem;
+  transition: border-color 0.3s ease;
+}
+
+.setting input:focus {
+  outline: none;
+  border-color: var(--accent-color);
 }

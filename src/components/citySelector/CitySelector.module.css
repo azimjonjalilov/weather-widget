@@ -1,31 +1,96 @@
-.wrapper {
+.container {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 16px;
+  align-items: stretch;
+  gap: 10px;
+  background-color: var(--header-bg);
+  border-radius: 12px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  flex-grow: 1;
+  margin-right: 20px;
 }
 
-input {
-  padding: 8px;
-  font-size: 16px;
-  border-radius: 6px;
+.inpDiv {
+  flex-grow: 1;
+  position: relative;
+  display: flex;
+}
+
+.input {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 1rem;
   border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: border 0.3s ease, background-color 0.3s ease;
 }
 
-button {
-  padding: 8px;
-  border: none;
-  background-color: #007bff;
-  color: white;
-  border-radius: 6px;
+.input:focus {
+  border-color: var(--accent-color);
+}
+
+.icon {
+  font-size: 28px;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  max-height: 160px;
+  overflow-y: auto;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+  position: absolute;
+  left: 0;
+  top: 100%;
+  width: 100%;
+}
+
+.list li {
+  padding: 10px 14px;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
-button:hover {
-  background-color: #0056b3;
+.list li:hover {
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
-.error {
-  color: red;
-  font-size: 14px;
+[data-theme="dark"] .list li:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.selected {
+  background-color: var(--accent-color);
+  color: #fff;
+  font-weight: bold;
+  border-radius: 6px;
+}
+
+.btn {
+  padding: 10px 14px;
+  font-size: 1rem;
+  font-weight: 500;
+  background-color: var(--accent-color);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #0b5ed7; /* slight darken */
 }

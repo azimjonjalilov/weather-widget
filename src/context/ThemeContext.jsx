@@ -6,8 +6,7 @@ export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState("light");
 
   useEffect(() => {
-    document.body.className = ""; // tozalash
-    document.body.classList.add(theme); // body ga theme class qo‘shish
+    document.body.setAttribute("data-theme", theme); // <--- Yaxshiroq yondashuv
   }, [theme]);
 
   const toggleTheme = () => {
@@ -21,5 +20,4 @@ export const ThemeProvider = ({ children }) => {
   );
 };
 
-// custom hook
 export const useTheme = () => useContext(ThemeContext);

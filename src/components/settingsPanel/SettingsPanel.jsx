@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styles from "./SettingsPanel.module.css";
 
 const SettingsPanel = ({
+  isSetting,
   unit,
   toggleUnit,
   reload,
@@ -19,28 +20,27 @@ const SettingsPanel = ({
   };
 
   return (
-    <div className={styles.panel}>
-      <h3>⚙️ Sozlamalar</h3>
+    <div className={`${styles.container} ${isSetting ? styles.active : ""}`}>
+      <div className={styles.content}>
+        <div className={styles.setting}>
+          <label>Birlik: </label>
+          <button onClick={toggleUnit}>
+            {unit === "metric" ? "°C → °F" : "°F → °C"}
+          </button>
+        </div>
 
-      <div className={styles.setting}>
-        <label>Birlik: </label>
-        <button onClick={toggleUnit}>
-          {unit === "metric" ? "°C → °F" : "°F → °C"}
-        </button>
-      </div>
-
-      <div className={styles.setting}>
-        <label>Yangilanish oraliği (sekund): </label>
-        <input
-          type="number"
-          value={intervalInput}
-          onChange={handleIntervalChange}
-          min="5"
-        />
-      </div>
-
-      <div className={styles.setting}>
-        <button onClick={reload}>🔄 Qayta yuklash</button>
+        <div className={styles.setting}>
+          <label>Yangilanish oraliği (sekund): </label>
+          <input
+            type="number"
+            value={intervalInput}
+            onChange={handleIntervalChange}
+            min="5"
+          />
+        </div>
+        <div className={styles.setting}>
+          <button onClick={reload}>Qayta yuklash</button>
+        </div>
       </div>
     </div>
   );

@@ -1,23 +1,27 @@
 import React from "react";
 import styles from "./WeatherDisplay.module.css";
 
-const WeatherDisplay = ({ data, unit }) => {
+const WeatherDisplay = ({ data, unit, cityData }) => {
   if (!data) return <p>Ma'lumotlar yuklanmoqda...</p>;
 
   const {
-    name,
-    sys: { country },
+    dt_txt,
     main: { temp, feels_like, humidity, pressure },
     weather,
     wind,
   } = data;
+
+  const date = dt_txt.split(" ")[0];
+
+  const { name, country } = cityData;
 
   const iconUrl = `https://openweathermap.org/img/wn/${weather[0].icon}@2x.png`;
 
   return (
     <div className={styles.card}>
       <h3>
-        {name}, {country}
+        {name}, {country} <br />
+        {date}
       </h3>
       <img src={iconUrl} alt={weather[0].description} />
       <p>
