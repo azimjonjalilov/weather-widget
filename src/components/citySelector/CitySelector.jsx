@@ -2,11 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import styles from "./CitySelector.module.css";
 import { debounce } from "../../utils/debounce";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa6";
-import { cityData } from "../../data/cityData";
-
-const cities = cityData
-  .filter((city) => city.country == "UZ")
-  .map((c) => c.name);
+import { cities } from "../../data/cityData";
 
 export default function CitySelector({ city, changeCity }) {
   const [search, setSearch] = useState("");
