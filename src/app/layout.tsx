@@ -12,9 +12,9 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "WeatherScope — Aniq Ob-havo Platformasi | Real-time Weather",
+  title: "WeatherInfo — Aniq Ob-havo Platformasi | Real-time Weather",
   description:
-    "WeatherScope — O'zbekiston viloyatlari va dunyo bo'ylab har soatlik va 5 kunlik aniq ob-havo prognozi, shamol tezligi, havo namligi, atmosfera bosimi hamda interaktiv harorat grafiki.",
+    "WeatherInfo — O'zbekiston viloyatlari va dunyo bo'ylab har soatlik va 5 kunlik aniq ob-havo prognozi, shamol tezligi, havo namligi, atmosfera bosimi hamda interaktiv harorat grafiki.",
   keywords: [
     "ob-havo",
     "ob havo toshkent",
@@ -22,22 +22,22 @@ export const metadata: Metadata = {
     "pogoda samarkand",
     "ob havo prognozi",
     "soatlik ob-havo",
-    "WeatherScope",
+    "WeatherInfo",
     "weather widget",
     "harorat",
   ],
   authors: [{ name: "Azimjon Jalilov" }],
   creator: "Azimjon Jalilov",
-  publisher: "WeatherScope Inc.",
-  metadataBase: new URL("https://weatherscope.app"),
+  publisher: "WeatherInfo Inc.",
+  metadataBase: new URL("https://weatherinfo.app"),
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "WeatherScope — Haqiqiy Vaqtda Aniq Ob-havo Platformasi",
+    title: "WeatherInfo — Haqiqiy Vaqtda Aniq Ob-havo Platformasi",
     description: "Viloyatlar va butun dunyo bo'yicha 24 soatlik va 5 kunlik yuqori aniqlikdagi ob-havo.",
-    url: "https://weatherscope.app",
-    siteName: "WeatherScope",
+    url: "https://weatherinfo.app",
+    siteName: "WeatherInfo",
     locale: "uz_UZ",
     type: "website",
   },

@@ -2,8 +2,8 @@ import { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "WeatherScope - Aniq Ob-havo Platformasi",
-    short_name: "WeatherScope",
+    name: "WeatherInfo - Aniq Ob-havo Platformasi",
+    short_name: "WeatherInfo",
     description: "Haqiqiy vaqtda dunyo va O'zbekiston viloyatlari bo'yicha aniq ob-havo prognozi",
     start_url: "/",
     display: "standalone",

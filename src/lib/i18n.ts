@@ -62,7 +62,7 @@ export interface Translations {
 
 export const translations: Record<Language, Translations> = {
   uz: {
-    appName: "WeatherScope",
+    appName: "WeatherInfo",
     appTagline: "Aniq va zamonaviy ob-havo kuzatuvi",
     searchPlaceholder: "Davlat yoki viloyat nomini qidiring (masalan: Samarqand viloyati, O'zbekiston)...",
     locationBtn: "Mening joylashuvim",
@@ -121,7 +121,7 @@ export const translations: Record<Language, Translations> = {
     weekDays: ["Yakshanba", "Dushanba", "Seshanba", "Chorshanba", "Payshanba", "Juma", "Shanba"],
   },
   ru: {
-    appName: "WeatherScope",
+    appName: "WeatherInfo",
     appTagline: "Точный мониторинг погоды в реальном времени",
     searchPlaceholder: "Поиск по стране или региону (например: Самарканд, Узбекистан)...",
     locationBtn: "Моё местоположение",
@@ -180,7 +180,7 @@ export const translations: Record<Language, Translations> = {
     weekDays: ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"],
   },
   en: {
-    appName: "WeatherScope",
+    appName: "WeatherInfo",
     appTagline: "Hyper-accurate weather intelligence",
     searchPlaceholder: "Search by country or state (e.g. Samarkand, Uzbekistan)...",
     locationBtn: "My location",

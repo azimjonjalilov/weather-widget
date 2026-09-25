@@ -1,11 +1,11 @@
-# 🌦️ AuraCast PRO — Aniq Ob-havo Platformasi
+# 🌦️ WeatherInfo PRO — Aniq Ob-havo Platformasi
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-blue?style=flat&logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat&logo=typescript)](https://www.typescriptlang.org/)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3-38B2AC?style=flat&logo=tailwind_css)](https://tailwindcss.com/)
 
-AuraCast — O'zbekiston viloyatlari va butun dunyo bo'yicha real vaqt rejimida har soatlik (24 soat) va 5 kunlik aniq ob-havo ma'lumotlarini taqdim etuvchi zamonaviy, xavfsiz va yuqori tezlikdagi platforma.
+WeatherInfo — O'zbekiston viloyatlari va butun dunyo bo'yicha real vaqt rejimida har soatlik (24 soat) va 5 kunlik aniq ob-havo ma'lumotlarini taqdim etuvchi zamonaviy, xavfsiz va yuqori tezlikdagi platforma.
 
 ---
 

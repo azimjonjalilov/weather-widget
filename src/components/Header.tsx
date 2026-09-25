@@ -54,7 +54,7 @@ export function Header({
   }, []);
 
   return (
-    <header className="w-full flex flex-col sm:flex-row items-center justify-between gap-4 py-4 px-6 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-3xl border border-white/40 dark:border-slate-800/80 shadow-lg transition-all duration-300">
+    <header className="relative z-30 w-full flex flex-col sm:flex-row items-center justify-between gap-4 py-4 px-6 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-3xl border border-white/40 dark:border-slate-800/80 shadow-lg transition-all duration-300">
       {/* Brand & Logo */}
       <div className="flex items-center gap-3">
         <div className="p-1 rounded-2xl bg-gradient-to-tr from-amber-500/20 via-sky-500/20 to-indigo-500/20 shadow-md shadow-sky-500/10">
@@ -66,7 +66,7 @@ export function Header({
               {t.appName}
             </h1>
             <span className="text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded-md bg-sky-500/10 dark:bg-sky-400/10 text-sky-600 dark:text-sky-400 tracking-wider">
-              PRO
+              INFO
             </span>
           </div>
           <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
@@ -78,7 +78,7 @@ export function Header({
       {/* Action Controls */}
       <div className="flex items-center flex-wrap gap-2">
         {/* Language Selector Dropdown */}
-        <div ref={langRef} className="relative">
+        <div ref={langRef} className="relative z-50">
           <button
             onClick={() => setIsLangOpen(!isLangOpen)}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100/80 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200/60 dark:border-slate-700 shadow-sm transition-all"
@@ -90,7 +90,7 @@ export function Header({
           </button>
 
           {isLangOpen && (
-            <div className="absolute right-0 top-full mt-1.5 z-50 w-32 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 p-1">
+            <div className="absolute right-0 top-full mt-1.5 z-[100] w-32 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 p-1">
               {languages.map((l) => (
                 <button
                   key={l.code}
