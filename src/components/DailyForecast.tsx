@@ -3,7 +3,7 @@
 import React from "react";
 import { DailyForecastItem, WeatherUnit } from "@/types/weather";
 import { WeatherIcon } from "@/components/WeatherIcon";
-import { Calendar, Droplets, Wind, Waves } from "lucide-react";
+import { Calendar, Droplets, Wind, Waves, Sun, Moon } from "lucide-react";
 import { translations, Language } from "@/lib/i18n";
 
 interface DailyForecastProps {
@@ -15,14 +15,6 @@ interface DailyForecastProps {
 export function DailyForecast({ daily, unit, lang = "uz" }: DailyForecastProps) {
   const t = translations[lang] || translations.uz;
   const tempUnit = unit === "metric" ? "°" : "°F";
-  const speedUnit = unit === "metric" ? "m/s" : "mph";
-
-  // Umumiy min va max haroratlarni bar uchun hisoblash
-  const allMins = daily.map((d) => d.temp_min);
-  const allMaxs = daily.map((d) => d.temp_max);
-  const globalMin = Math.min(...allMins, 0);
-  const globalMax = Math.max(...allMaxs, 35);
-  const tempRange = Math.max(1, globalMax - globalMin);
 
   return (
     <div className="w-full bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-3xl p-5 sm:p-6 border border-white/40 dark:border-slate-800/80 shadow-lg">
@@ -44,14 +36,10 @@ export function DailyForecast({ daily, unit, lang = "uz" }: DailyForecastProps) 
         </span>
       </div>
 
-      {/* 5-Day Cards Grid: Desktopda 5 ustun, mobilda gorizontal silliq slider */}
+      {/* 5-Day Cards Grid: Desktopda 5 ustun, mobilda 2 ustun yoki qulay scroll */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 sm:gap-4">
         {daily.map((item, idx) => {
           const isToday = idx === 0;
-
-          // Apple weather style bar position
-          const leftPercent = Math.max(0, Math.min(100, ((item.temp_min - globalMin) / tempRange) * 100));
-          const widthPercent = Math.max(15, Math.min(100 - leftPercent, ((item.temp_max - item.temp_min) / tempRange) * 100));
 
           return (
             <div
@@ -90,26 +78,28 @@ export function DailyForecast({ daily, unit, lang = "uz" }: DailyForecastProps) 
                 </span>
               </div>
 
-              {/* Temperature Min / Max */}
-              <div className="space-y-1.5 my-2">
-                <div className="flex items-center justify-between text-xs font-bold">
-                  <span className="text-rose-500 flex items-center">
-                    ↑ {item.temp_max}{tempUnit}
-                  </span>
-                  <span className="text-sky-500 flex items-center">
-                    ↓ {item.temp_min}{tempUnit}
+              {/* Day & Night Clear Badges (Progress Bar o'rniga aniq Kunduz va Tun) */}
+              <div className="grid grid-cols-2 gap-1.5 my-2.5 p-1.5 rounded-xl bg-slate-100/70 dark:bg-slate-900/50 border border-slate-200/40 dark:border-slate-800/60">
+                {/* Kunduzi */}
+                <div className="flex flex-col items-center justify-center p-1.5 rounded-lg bg-amber-500/10 dark:bg-amber-400/10 border border-amber-500/20">
+                  <div className="flex items-center gap-1 text-[10px] font-semibold text-amber-600 dark:text-amber-400 mb-0.5">
+                    <Sun className="w-3 h-3 text-amber-500" />
+                    <span>{t.dayTime}</span>
+                  </div>
+                  <span className="text-sm font-extrabold text-slate-800 dark:text-slate-100">
+                    +{item.temp_max}{tempUnit}
                   </span>
                 </div>
 
-                {/* Progress Gradient Bar */}
-                <div className="relative h-2 w-full bg-slate-200/80 dark:bg-slate-700/80 rounded-full overflow-hidden">
-                  <div
-                    className="absolute top-0 bottom-0 rounded-full bg-gradient-to-r from-sky-400 via-amber-400 to-rose-500 shadow-sm"
-                    style={{
-                      left: `${leftPercent}%`,
-                      width: `${widthPercent}%`,
-                    }}
-                  />
+                {/* Kechasi */}
+                <div className="flex flex-col items-center justify-center p-1.5 rounded-lg bg-indigo-500/10 dark:bg-indigo-400/10 border border-indigo-500/20">
+                  <div className="flex items-center gap-1 text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 mb-0.5">
+                    <Moon className="w-3 h-3 text-indigo-500" />
+                    <span>{t.nightTime}</span>
+                  </div>
+                  <span className="text-sm font-extrabold text-slate-800 dark:text-slate-100">
+                    +{item.temp_min}{tempUnit}
+                  </span>
                 </div>
               </div>
 

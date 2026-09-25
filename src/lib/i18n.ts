@@ -31,6 +31,8 @@ export interface Translations {
   currentBadge: string;
   feelsLike: string;
   today: string;
+  dayTime: string;
+  nightTime: string;
   hourlyTitle: string;
   hourlySubtitle: string;
   dailyTitle: string;
@@ -90,6 +92,8 @@ export const translations: Record<Language, Translations> = {
     currentBadge: "Joriy",
     feelsLike: "His etilishi",
     today: "Bugun",
+    dayTime: "Kunduzi",
+    nightTime: "Kechasi",
     hourlyTitle: "Soatlik prognoz (24 soat)",
     hourlySubtitle: "Har soatlik aniq ma'lumot",
     dailyTitle: "5 kunlik prognoz",
@@ -147,6 +151,8 @@ export const translations: Record<Language, Translations> = {
     currentBadge: "Текущий",
     feelsLike: "Ощущается как",
     today: "Сегодня",
+    dayTime: "Днём",
+    nightTime: "Ночью",
     hourlyTitle: "Почасовой прогноз (24 часа)",
     hourlySubtitle: "Данные на каждый час",
     dailyTitle: "Прогноз на 5 дней",
@@ -204,6 +210,8 @@ export const translations: Record<Language, Translations> = {
     currentBadge: "Current",
     feelsLike: "Feels like",
     today: "Today",
+    dayTime: "Day",
+    nightTime: "Night",
     hourlyTitle: "Hourly Forecast (24 Hours)",
     hourlySubtitle: "Every single hour breakdown",
     dailyTitle: "5-Day Forecast",
