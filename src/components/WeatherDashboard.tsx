@@ -225,7 +225,16 @@ export function WeatherDashboard() {
             {t.appName} PRO © {new Date().getFullYear()} • OpenWeatherMap Engine
           </p>
           <p className="text-[11px] opacity-75">
-            Designed for precision & clarity. Built with Next.js & TypeScript.
+            Designed & Developed by{" "}
+            <a
+              href="https://azimjonjalilov.uz"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 font-semibold underline underline-offset-2 transition-colors"
+            >
+              Azimjon Jalilov
+            </a>{" "}
+            (Fullstack Developer)
           </p>
         </footer>
       </div>

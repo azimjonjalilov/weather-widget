@@ -1,4 +1,4 @@
-# 🌦️ WeatherInfo PRO — Zamonaviy Ob-havo Platformasi
+# 🌦️ WeatherInfo PRO — Real-Time Weather Intelligence Platform
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-blue?style=flat&logo=react)](https://react.dev/)
@@ -6,73 +6,80 @@
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3-38B2AC?style=flat&logo=tailwind_css)](https://tailwindcss.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-**WeatherInfo** — O'zbekiston viloyatlari va butun dunyo bo'ylab real vaqt rejimida har soatlik (24 soat) va 5 kunlik aniq ob-havo ma'lumotlarini taqdim etuvchi zamonaviy, tezkor va xavfsiz platforma.
+**WeatherInfo PRO** is a modern, responsive, and high-performance weather intelligence application. Powered by Next.js 16 (App Router & Turbopack), React 19, TypeScript, and OpenWeatherMap APIs, it delivers hyper-accurate 24-hour hourly breakdowns and 5-day weather forecasts across regions of Uzbekistan and worldwide.
 
 ---
 
-## ✨ Asosiy Imkoniyatlar (Key Features)
+## ✨ Key Features
 
-- 📍 **Avtomatik Geolocation**: Sayt ochilishi bilanoq foydalanuvchining aniq GPS koordinatalari bo'yicha joriy ob-havoni bir zumda yuklash.
-- ⏰ **24 Soatlik Aniq Soatlik Prognoz**: Har bir alohida soat uchun real ob-havo holatiga (kunduzgi quyosh yoki tungi oy/bulut) mos keluvchi dinamik SVG vektor ikonkalar, harorat, yog'ingarchilik ehtimoli va shamol tezligi.
-- 📅 **5 Kunlik Interaktiv Kartalar (Showcase Grid)**: Har bir kun uchun:
-  - ☀️ **Kunduzgi harorat** (aniq iliq oltin badge)
-  - 🌙 **Tungi harorat** (sokin moviy badge)
-  - 💧 Yog'ingarchilik ehtimoli, 💨 shamol tezligi va 🌊 namlik darajasi.
-- 📈 **Interaktiv Harorat Grafigi (Recharts AreaChart)**: Kun davomidagi harorat va his etilishi dinamikasini ko'rsatuvchi silliq gradientli egri chiziq va interaktiv tooltip.
-- 🌐 **3 Ta Tilda To'liq Qo'llab-quvvatlash**:
-  - 🇺🇿 **O'zbekcha** (UZ)
-  - 🇷🇺 **Русский** (RU)
-  - 🇬🇧 **English** (EN)
-  *(Xalqaro texnik terminlar: `hPa`, `m/s`, `mph`, `°C`, `°F`, `km`, `PRO` o'zgarishsiz saqlanadi)*.
-- 🔍 **Davlat va Viloyat bo'yicha Jonli Qidiruv**: OpenWeatherMap Geocoding API orqali faqat davlat va viloyat darajasida toza qidiruv + O'zbekistonning barcha 12 ta viloyati, Toshkent shahri va Qoraqalpog'iston Respublikasi.
-- ⌨️ **Klaviatura Boshqaruvi (Spotlight UX)**: `⌘K` / `Ctrl+K` tezkor qidiruv, `↑` va `↓` strelkalari orqali natijalar bo'ylab navigatsiya.
-- ⭐ **Sevimli Shaharlar (Favorites)**: Brauzerning `localStorage` xotirasida saqlanuvchi tezkor shahar chiplari.
-- 🎨 **Glassmorphism & Dinamik Osmon Fonlari**: Ob-havo holatiga qarab avtomatik o'zgaruvchi gradientlar va Dark / Light rejim.
-- 🛡️ **Xavfsiz Arxitektura**: OWM API kalitini mijozdan yashiruvchi Server Route Handler (`/api/weather`), Clickjacking himoyasi (`X-Frame-Options: SAMEORIGIN`), HSTS va no-sniff sarlavhalari.
+- 📍 **Instant Auto-Geolocation**: Automatically detects the user's real-time GPS coordinates upon opening the app and delivers precise local weather data.
+- ⏰ **24-Hour Continuous Hourly Forecast**: Full breakdown for every individual hour featuring dynamic day/night vector SVG icons, temperature, precipitation chance (`💧 %`), and wind speed.
+- 📅 **5-Day Interactive Showcase Cards**: Redesigned intuitive forecast cards featuring:
+  - ☀️ **Day Temperature** badge (warm golden highlight)
+  - 🌙 **Night Temperature** badge (cool indigo highlight)
+  - 💧 Rain probability, 💨 wind velocity, and 🌊 relative humidity.
+- 📈 **Interactive Temperature Curve (Recharts AreaChart)**: Continuous smooth temperature and "feels-like" trendlines with interactive glassmorphism tooltips.
+- 🌐 **Full 3-Language Internationalization (i18n)**:
+  - 🇺🇿 **Uzbek** (O'zbekcha)
+  - 🇷🇺 **Russian** (Русский)
+  - 🇬🇧 **English** (English)  
+  *(International technical terms such as `hPa`, `m/s`, `mph`, `°C`, `°F`, `km`, `PRO` are preserved intact)*.
+- 🔍 **Country & Province Live Autocomplete**: Real-time server-side Geocoding API filtering exclusively by country and state/province + complete coverage of all 12 regions of Uzbekistan, Tashkent city, and Karakalpakstan.
+- ⌨️ **Keyboard Navigation (Spotlight / Raycast UX)**: Global `⌘K` / `Ctrl+K` shortcut to focus search, with `↑` and `↓` arrow keys to navigate suggestions.
+- ⭐ **Favorite Cities**: Persistent quick-access city chips saved directly to `localStorage`.
+- 🎨 **Glassmorphism & Dynamic Sky Gradients**: Adaptive color palettes and gradients that respond to real-time atmospheric conditions (Sunny, Overcast, Rain, Snow, Thunderstorm) with Dark & Light theme support.
+- 🛡️ **Enterprise Security Standards**: Server Route Handler (`/api/weather`) that securely encapsulates OpenWeatherMap API keys, enforced with strict HTTP security headers (HSTS, X-Frame-Options Clickjacking defense, CSP, and no-sniff policies).
 
 ---
 
-## 🛠 Texnologiyalar Steki (Tech Stack)
+## 🛠 Tech Stack
 
-| Yo'nalish | Texnologiya |
+| Domain | Technology |
 | :--- | :--- |
 | **Framework** | **Next.js 16 (App Router, Turbopack)** |
-| **Kutubxona** | **React 19** |
-| **Dasturlash Tili** | **TypeScript 5 (100% strict type-safe)** |
-| **Styling** | **Tailwind CSS** (Glassmorphism & Dark Mode) |
-| **Ikonkalar** | **Dinamik SVG Vektor Ikonkalar + Lucide React** |
-| **Grafiklar** | **Recharts** (AreaChart) |
-| **API** | **OpenWeatherMap One Call & Geocoding API** |
+| **Library** | **React 19** |
+| **Language** | **TypeScript 5 (Strict type-safe)** |
+| **Styling** | **Tailwind CSS (Glassmorphism & Dark Mode)** |
+| **Icons** | **Dynamic SVG Vector Weather Icons + Lucide React** |
+| **Visualization** | **Recharts (AreaChart)** |
+| **Data APIs** | **OpenWeatherMap One Call & Direct Geocoding API** |
 
 ---
 
-## 🚀 O'rnatish va Ishga Tushirish (Installation)
+## 🚀 Getting Started
 
-1. Repozitoriyani klon qiling:
+### Prerequisites
+
+Ensure you have [Node.js](https://nodejs.org/) installed (v18.17 or later recommended).
+
+### Installation
+
+1. Clone the repository:
 ```bash
 git clone https://github.com/azimjonjalilov/weather-widget.git
 cd weather-widget
 ```
 
-2. Bog'liqliklarni o'rnating:
+2. Install dependencies:
 ```bash
 npm install
 ```
 
-3. `.env.local` faylini yarating va OpenWeatherMap API kalitingizni kiriting:
+3. Configure environment variables:
+Create a `.env.local` file in the root directory and add your OpenWeatherMap API key:
 ```env
 OWM_API_KEY=your_openweathermap_api_key_here
 ```
-*(Namunaviy fayl sifatida `.env.example` mavjud).*
+*(Reference provided in `.env.example`).*
 
-4. Dasturni ishga tushiring:
+4. Run the development server:
 ```bash
 npm run dev
 ```
 
-Brauzeringizda **[http://localhost:3000](http://localhost:3000)** manzilini oching.
+Open **[http://localhost:3000](http://localhost:3000)** in your browser.
 
-5. Production uchun yig'ish (Build):
+5. Build for production:
 ```bash
 npm run build
 npm run start
@@ -80,45 +87,52 @@ npm run start
 
 ---
 
-## 📂 Papkalar Tuzilishi (Project Structure)
+## 📂 Project Structure
 
 ```plaintext
 src/
 ├── app/
 │   ├── api/
-│   │   ├── geo/route.ts         # Jonli viloyat/davlat qidiruvi (Geocoding API)
-│   │   └── weather/route.ts     # Xavfsiz OWM API Proxy & 24h interpolyatsiya
-│   ├── icon.svg                 # Vektor Favicon
-│   ├── manifest.ts              # PWA Web Manifest
-│   ├── robots.ts & sitemap.ts   # SEO qidiruv tizimlari indeksatsiyasi
-│   ├── globals.css              # Tailwind global uslublar
-│   ├── layout.tsx               # Root Layout, SEO metadata, ThemeProvider
-│   └── page.tsx                 # Asosiy sahifa
+│   │   ├── geo/route.ts         # Server Geocoding API (Country & Province search)
+│   │   └── weather/route.ts     # Secure OWM API Proxy & 24h hourly interpolation
+│   ├── icon.svg                 # Vector Favicon
+│   ├── manifest.ts              # PWA Web App Manifest
+│   ├── robots.ts & sitemap.ts   # SEO indexing configuration
+│   ├── globals.css              # Tailwind global styling & glassmorphism
+│   ├── layout.tsx               # Root layout, OpenGraph & SEO metadata
+│   └── page.tsx                 # Main dashboard view
 ├── components/
-│   ├── Header.tsx               # Logo, til tanlash, GPS, C/F va Dark mode
-│   ├── CitySearch.tsx           # Jonli qidiruv, ⌘K, oxirgi qidiruvlar tarixi
-│   ├── FavoritesBar.tsx         # Sevimli shaharlar chiplari
-│   ├── HeroWeatherCard.tsx      # Joriy harorat, osmon holati, dinamik gradient
-│   ├── MetricsGrid.tsx          # Shamol, namlik, bosim, ko'rinuvchanlik, quyosh
-│   ├── HourlyForecast.tsx       # 24 soatlik har soatlik silliq slider
-│   ├── DailyForecast.tsx        # 5 kunlik kartalar (Kunduz/Tun ko'rsatkichlari)
-│   ├── WeatherChart.tsx         # Harorat dinamikasi silliq grafigi
-│   ├── SettingsModal.tsx        # Yangilanish intervali va birliklar sozlamasi
-│   ├── WeatherIcon.tsx          # Sifatli SVG ob-havo vektor ikonkalari
-│   └── WeatherScopeLogo.tsx     # WeatherInfo rasmiy logotipi
+│   ├── Header.tsx               # Brand logo, language switcher, GPS, C/F & theme toggle
+│   ├── CitySearch.tsx           # Live search, ⌘K shortcut, recent searches history
+│   ├── FavoritesBar.tsx         # Saved favorite locations
+│   ├── HeroWeatherCard.tsx      # Current conditions, large temp, atmospheric gradient
+│   ├── MetricsGrid.tsx          # Wind compass, humidity, pressure, visibility, sunrise/sunset
+│   ├── HourlyForecast.tsx       # 24-hour horizontal scrollable slider
+│   ├── DailyForecast.tsx        # 5-day showcase cards with Day/Night badges
+│   ├── WeatherChart.tsx         # Recharts temperature & feels-like curve
+│   ├── SettingsModal.tsx        # Auto-refresh interval & unit configuration
+│   ├── WeatherIcon.tsx          # Dynamic SVG vector weather icon renderer
+│   └── WeatherScopeLogo.tsx     # Official WeatherInfo vector logo
 ├── hooks/
-│   ├── useWeather.ts            # Ob-havoni yuklash, kesh va ko'p tilli boshqaruv
-│   ├── useGeolocation.ts        # Avtomatik GPS geolokatsiyani aniqlash
-│   └── useFavorites.ts          # Sevimli shaharlar (LocalStorage)
+│   ├── useWeather.ts            # Weather data fetching, caching & multilingual synchronization
+│   ├── useGeolocation.ts        # HTML5 Geolocation API hook
+│   └── useFavorites.ts          # LocalStorage-backed favorites management
 ├── lib/
-│   └── i18n.ts                  # 3 ta tildagi (UZ, RU, EN) to'liq lug'at
+│   └── i18n.ts                  # Comprehensive 3-language dictionary (UZ, RU, EN)
 └── types/
-    └── weather.ts               # Qat'iy TypeScript interfeyslari
+    └── weather.ts               # Strict TypeScript interfaces & types
 ```
 
 ---
 
-## 👨‍💻 Muallif (Author)
+## 👨‍💻 Author
 
-**Azimjon Jalilov** — Frontend / Fullstack Developer  
+**Azimjon Jalilov** — Fullstack Developer  
+🌐 [Website: azimjonjalilov.uz](https://azimjonjalilov.uz)  
 📎 [GitHub Profile](https://github.com/azimjonjalilov)
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
