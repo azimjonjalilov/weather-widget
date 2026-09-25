@@ -4,6 +4,95 @@ import { WeatherResponse, HourlyForecastItem, DailyForecastItem } from "@/types/
 const API_KEY = process.env.OWM_API_KEY || "a9ae2ba11a4327cdc44e0838914137bc";
 const BASE_URL = "https://api.openweathermap.org/data/2.5";
 
+// Har bir soat uchun 24 ta soatlik ma'lumot yasovchi interpolyatsiya funksiyasi
+function generate24HourlyForecast(rawList: any[], baseTemp: number, isC: boolean): HourlyForecastItem[] {
+  const result: HourlyForecastItem[] = [];
+  const now = new Date();
+  const currentHour = now.getHours();
+
+  if (!rawList || rawList.length === 0) {
+    // Fallback 24 soat
+    for (let i = 0; i < 24; i++) {
+      const hourDate = new Date(now.getTime() + i * 3600 * 1000);
+      const h = hourDate.getHours().toString().padStart(2, "0");
+      const delta = Math.sin((currentHour + i) / 3.8) * 4;
+      const isNight = hourDate.getHours() < 6 || hourDate.getHours() > 20;
+
+      result.push({
+        dt: Math.floor(hourDate.getTime() / 1000),
+        time: `${h}:00`,
+        temp: Math.round(baseTemp + delta),
+        feels_like: Math.round(baseTemp + delta - 1),
+        pop: Math.round(Math.abs(Math.sin(i)) * 25),
+        icon: isNight ? "01n" : "01d",
+        description: isNight ? "Ochiq tun" : "Quyoshli havo",
+        condition: "Clear",
+        wind_speed: +(isC ? 3.0 + (i % 3) * 0.5 : 7.0 + (i % 3)).toFixed(1),
+        humidity: Math.round(40 + Math.sin(i) * 15),
+      });
+    }
+    return result;
+  }
+
+  // OWM 3 soatlik nuqtalarini har soatga interpolyatsiya qilish
+  for (let i = 0; i < 24; i++) {
+    const targetTime = now.getTime() + i * 3600 * 1000;
+    const targetDt = Math.floor(targetTime / 1000);
+    const hourDate = new Date(targetTime);
+    const h = hourDate.getHours().toString().padStart(2, "0");
+
+    // Eng yaqin OWM nuqtalarini topamiz
+    let prevItem = rawList[0];
+    let nextItem = rawList[0];
+
+    for (let j = 0; j < rawList.length - 1; j++) {
+      if (rawList[j].dt <= targetDt && rawList[j + 1].dt >= targetDt) {
+        prevItem = rawList[j];
+        nextItem = rawList[j + 1];
+        break;
+      }
+      if (rawList[j].dt > targetDt) {
+        prevItem = rawList[j];
+        nextItem = rawList[j];
+        break;
+      }
+    }
+
+    const tSpan = Math.max(1, nextItem.dt - prevItem.dt);
+    const factor = Math.min(1, Math.max(0, (targetDt - prevItem.dt) / tSpan));
+
+    const temp = Math.round(prevItem.main.temp + (nextItem.main.temp - prevItem.main.temp) * factor);
+    const feels_like = Math.round(prevItem.main.feels_like + (nextItem.main.feels_like - prevItem.main.feels_like) * factor);
+    const pop = Math.round(((prevItem.pop || 0) + ((nextItem.pop || 0) - (prevItem.pop || 0)) * factor) * 100);
+    const wind_speed = +(prevItem.wind?.speed || 3.5).toFixed(1);
+    const humidity = Math.round(prevItem.main.humidity + (nextItem.main.humidity - prevItem.main.humidity) * factor);
+
+    const activeItem = factor > 0.5 ? nextItem : prevItem;
+    const isNight = hourDate.getHours() < 6 || hourDate.getHours() > 20;
+    let icon = activeItem.weather?.[0]?.icon || "01d";
+    if (isNight && icon.endsWith("d")) {
+      icon = icon.replace("d", "n");
+    } else if (!isNight && icon.endsWith("n")) {
+      icon = icon.replace("n", "d");
+    }
+
+    result.push({
+      dt: targetDt,
+      time: `${h}:00`,
+      temp,
+      feels_like,
+      pop,
+      icon,
+      description: activeItem.weather?.[0]?.description || "Ochiq osmon",
+      condition: activeItem.weather?.[0]?.main || "Clear",
+      wind_speed,
+      humidity,
+    });
+  }
+
+  return result;
+}
+
 function getFallbackData(city: string = "Toshkent", unit: "metric" | "imperial" = "metric"): WeatherResponse {
   const isC = unit === "metric";
   const baseTemp = isC ? 22 : 72;
@@ -12,23 +101,7 @@ function getFallbackData(city: string = "Toshkent", unit: "metric" | "imperial" 
   const days = ["Yakshanba", "Dushanba", "Seshanba", "Chorshanba", "Payshanba", "Juma", "Shanba"];
   const currentDayIdx = new Date().getDay();
 
-  const hourly: HourlyForecastItem[] = Array.from({ length: 8 }).map((_, i) => {
-    const hourTime = new Date(Date.now() + i * 3 * 3600 * 1000);
-    const hours = hourTime.getHours().toString().padStart(2, "0");
-    const delta = Math.sin(i) * 3;
-    return {
-      dt: now + i * 3 * 3600,
-      time: `${hours}:00`,
-      temp: Math.round(baseTemp + delta),
-      feels_like: Math.round(baseTemp + delta - 1),
-      pop: Math.round(Math.random() * 20),
-      icon: i % 2 === 0 ? "01d" : "02d",
-      description: "Quyoshli, ochiq osmon",
-      condition: "Clear",
-      wind_speed: isC ? 3.5 : 8.0,
-      humidity: 45,
-    };
-  });
+  const hourly = generate24HourlyForecast([], baseTemp, isC);
 
   const daily: DailyForecastItem[] = Array.from({ length: 5 }).map((_, i) => {
     const dayName = days[(currentDayIdx + i) % 7];
@@ -75,44 +148,49 @@ function getFallbackData(city: string = "Toshkent", unit: "metric" | "imperial" 
     hourly,
     daily,
     unit,
-    lastUpdated: new Date().toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit" }),
+    lastUpdated: new Date().toISOString(),
     isFallback: true,
   };
 }
 
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const city = searchParams.get("city") || "Tashkent";
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const city = searchParams.get("city") || "";
   const lat = searchParams.get("lat");
   const lon = searchParams.get("lon");
   const unit = (searchParams.get("unit") as "metric" | "imperial") || "metric";
 
+  const isC = unit === "metric";
+
+  if (!API_KEY) {
+    return NextResponse.json(getFallbackData(city || "Toshkent", unit));
+  }
+
   try {
-    let currentWeatherUrl = "";
+    let currentUrl = "";
     let forecastUrl = "";
 
     if (lat && lon) {
-      currentWeatherUrl = `${BASE_URL}/weather?lat=${lat}&lon=${lon}&units=${unit}&lang=uz&appid=${API_KEY}`;
-      forecastUrl = `${BASE_URL}/forecast?lat=${lat}&lon=${lon}&units=${unit}&lang=uz&appid=${API_KEY}`;
+      currentUrl = `${BASE_URL}/weather?lat=${lat}&lon=${lon}&units=${unit}&appid=${API_KEY}`;
+      forecastUrl = `${BASE_URL}/forecast?lat=${lat}&lon=${lon}&units=${unit}&appid=${API_KEY}`;
     } else {
-      currentWeatherUrl = `${BASE_URL}/weather?q=${encodeURIComponent(city)}&units=${unit}&lang=uz&appid=${API_KEY}`;
-      forecastUrl = `${BASE_URL}/forecast?q=${encodeURIComponent(city)}&units=${unit}&lang=uz&appid=${API_KEY}`;
+      const qCity = city.trim() || "Toshkent";
+      currentUrl = `${BASE_URL}/weather?q=${encodeURIComponent(qCity)}&units=${unit}&appid=${API_KEY}`;
+      forecastUrl = `${BASE_URL}/forecast?q=${encodeURIComponent(qCity)}&units=${unit}&appid=${API_KEY}`;
     }
 
     const [currentRes, forecastRes] = await Promise.all([
-      fetch(currentWeatherUrl, { next: { revalidate: 300 } }),
+      fetch(currentUrl, { next: { revalidate: 300 } }),
       fetch(forecastUrl, { next: { revalidate: 300 } }),
     ]);
 
     if (!currentRes.ok || !forecastRes.ok) {
-      console.warn("OpenWeatherMap fetch failed, using fallback mock data.");
-      return NextResponse.json(getFallbackData(city, unit));
+      return NextResponse.json(getFallbackData(city || "Toshkent", unit));
     }
 
     const currentData = await currentRes.json();
     const forecastData = await forecastRes.json();
 
-    // Transform current
     const current = {
       city: currentData.name,
       country: currentData.sys?.country || "",
@@ -139,26 +217,11 @@ export async function GET(req: NextRequest) {
       timezone: currentData.timezone || 0,
     };
 
-    // Transform hourly (next 24 hours -> next 8-9 intervals of 3 hours)
     const rawList = forecastData.list || [];
-    const hourly: HourlyForecastItem[] = rawList.slice(0, 9).map((item: any) => {
-      const date = new Date(item.dt * 1000);
-      const hours = date.getHours().toString().padStart(2, "0");
-      return {
-        dt: item.dt,
-        time: `${hours}:00`,
-        temp: Math.round(item.main.temp),
-        feels_like: Math.round(item.main.feels_like),
-        pop: Math.round((item.pop || 0) * 100),
-        icon: item.weather?.[0]?.icon || "01d",
-        description: item.weather?.[0]?.description || "",
-        condition: item.weather?.[0]?.main || "Clear",
-        wind_speed: item.wind?.speed || 0,
-        humidity: item.main.humidity,
-      };
-    });
+    // 24 soatlik to'liq har bir soat uchun hisoblash
+    const hourly = generate24HourlyForecast(rawList, current.temp, isC);
 
-    // Group 5-day daily forecast
+    // 5 kunlik prognoz guruhlash
     const dailyMap: { [key: string]: any[] } = {};
     const daysUz = ["Yakshanba", "Dushanba", "Seshanba", "Chorshanba", "Payshanba", "Juma", "Shanba"];
 
@@ -173,22 +236,22 @@ export async function GET(req: NextRequest) {
     const dailyKeys = Object.keys(dailyMap).slice(0, 5);
     const daily: DailyForecastItem[] = dailyKeys.map((dateKey, index) => {
       const dayItems = dailyMap[dateKey];
-      const temps = dayItems.map((it) => it.main.temp);
+      const temps = dayItems.map((it: any) => it.main.temp);
       const minTemp = Math.round(Math.min(...temps));
       const maxTemp = Math.round(Math.max(...temps));
 
       const midItem = dayItems[Math.floor(dayItems.length / 2)] || dayItems[0];
-      const dayDate = new Date(dateKey);
-      const dayOfWeek = daysUz[dayDate.getDay()];
+      const dateObj = new Date(dateKey);
+      const dayIdx = dateObj.getDay();
 
       return {
-        date: dayDate.toLocaleDateString("uz-UZ", { month: "short", day: "numeric" }),
-        dayName: index === 0 ? "Bugun" : dayOfWeek,
+        date: dateObj.toLocaleDateString("uz-UZ", { month: "short", day: "numeric" }),
+        dayName: index === 0 ? "Bugun" : daysUz[dayIdx] || "Kunda",
         temp_min: minTemp,
         temp_max: maxTemp,
         temp_day: Math.round(midItem.main.temp),
         condition: midItem.weather?.[0]?.main || "Clear",
-        description: midItem.weather?.[0]?.description || "",
+        description: midItem.weather?.[0]?.description || "Ochiq",
         icon: midItem.weather?.[0]?.icon || "01d",
         humidity: midItem.main.humidity,
         wind_speed: midItem.wind?.speed || 0,
@@ -201,13 +264,13 @@ export async function GET(req: NextRequest) {
       hourly,
       daily,
       unit,
-      lastUpdated: new Date().toLocaleTimeString("uz-UZ", { hour: "2-digit", minute: "2-digit" }),
+      lastUpdated: new Date().toISOString(),
       isFallback: false,
     };
 
     return NextResponse.json(response);
-  } catch (error) {
-    console.error("Weather API error:", error);
-    return NextResponse.json(getFallbackData(city, unit));
+  } catch (err) {
+    console.error("Weather fetch server error:", err);
+    return NextResponse.json(getFallbackData(city || "Toshkent", unit));
   }
 }

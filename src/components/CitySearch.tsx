@@ -2,10 +2,12 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Search, MapPin, X, Clock, Loader2, Sparkles, Command, Globe2 } from "lucide-react";
+import { Language, translations } from "@/lib/i18n";
 
 interface CitySearchProps {
   onSelectCity: (city: string) => void;
   currentCity: string;
+  lang?: Language;
 }
 
 interface RegionResult {
@@ -17,9 +19,8 @@ interface RegionResult {
   lon?: number;
 }
 
-const RECENT_KEY = "weatherpulse_recent_regions";
+const RECENT_KEY = "auracast_recent_regions";
 
-// Dastlabki O'zbekiston viloyatlari ro'yxati
 const UZBEKISTAN_PROVINCES: RegionResult[] = [
   { province: "Toshkent shahri", country: "O'zbekiston", countryCode: "UZ", queryName: "Tashkent" },
   { province: "Samarqand viloyati", country: "O'zbekiston", countryCode: "UZ", queryName: "Samarkand" },
@@ -37,16 +38,8 @@ const UZBEKISTAN_PROVINCES: RegionResult[] = [
   { province: "Toshkent viloyati", country: "O'zbekiston", countryCode: "UZ", queryName: "Chirchiq" },
 ];
 
-function getCountryFlag(countryCode?: string) {
-  if (!countryCode || countryCode.length !== 2) return "🌐";
-  const codePoints = countryCode
-    .toUpperCase()
-    .split("")
-    .map((char) => 127397 + char.charCodeAt(0));
-  return String.fromCodePoint(...codePoints);
-}
-
-export function CitySearch({ onSelectCity, currentCity }: CitySearchProps) {
+export function CitySearch({ onSelectCity, currentCity, lang = "uz" }: CitySearchProps) {
+  const t = translations[lang] || translations.uz;
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -57,7 +50,6 @@ export function CitySearch({ onSelectCity, currentCity }: CitySearchProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Oxirgi qidirilgan viloyat va davlatlarni yuklash
   useEffect(() => {
     try {
       const stored = localStorage.getItem(RECENT_KEY);
@@ -69,7 +61,6 @@ export function CitySearch({ onSelectCity, currentCity }: CitySearchProps) {
     }
   }, []);
 
-  // Global ⌘K / Ctrl+K
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
@@ -82,7 +73,6 @@ export function CitySearch({ onSelectCity, currentCity }: CitySearchProps) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Tashqariga bosilganda yopish
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -93,7 +83,6 @@ export function CitySearch({ onSelectCity, currentCity }: CitySearchProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Jonli avtoto'ldirish (Faqat davlat va viloyat bo'yicha)
   useEffect(() => {
     const trimmed = query.trim();
     if (trimmed.length < 2) {
@@ -120,7 +109,6 @@ export function CitySearch({ onSelectCity, currentCity }: CitySearchProps) {
     return () => clearTimeout(timeoutId);
   }, [query]);
 
-  // Oxirgi qidiruvlarga saqlash
   const saveToRecent = useCallback((item: { province: string; queryName: string; country: string }) => {
     setRecentSearches((prev) => {
       const filtered = prev.filter((p) => p.province.toLowerCase() !== item.province.toLowerCase());
@@ -165,7 +153,6 @@ export function CitySearch({ onSelectCity, currentCity }: CitySearchProps) {
     inputRef.current?.blur();
   };
 
-  // Ko'rsatiladigan ro'yxat (Query bo'lsa qidiruv natijalari, bo'lmasa O'zbekiston viloyatlari)
   const displayResults: RegionResult[] = query.trim().length >= 2
     ? apiResults.length > 0
       ? apiResults
@@ -220,8 +207,8 @@ export function CitySearch({ onSelectCity, currentCity }: CitySearchProps) {
           }}
           onFocus={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
-          placeholder="Davlat yoki viloyat nomini qidiring (masalan: Samarqand viloyati, O'zbekiston)..."
-          className="w-full pl-11 pr-24 py-3.5 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-white/40 dark:border-slate-700/60 text-slate-800 dark:text-slate-100 placeholder-slate-400 text-sm shadow-lg focus:outline-none focus:ring-2 focus:ring-sky-500/50 dark:focus:ring-sky-400/50 transition-all duration-200"
+          placeholder={t.searchPlaceholder}
+          className="w-full pl-11 pr-24 py-3.5 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl rounded-2xl border border-white/50 dark:border-slate-700/60 text-slate-800 dark:text-slate-100 placeholder-slate-400 text-sm shadow-md focus:outline-none focus:ring-2 focus:ring-sky-500/50 dark:focus:ring-sky-400/50 transition-all duration-200"
         />
 
         {/* Right side controls */}
@@ -260,14 +247,14 @@ export function CitySearch({ onSelectCity, currentCity }: CitySearchProps) {
               <div className="flex items-center justify-between px-3 py-1 text-xs font-semibold uppercase tracking-wider text-slate-400">
                 <span className="flex items-center gap-1.5">
                   <Clock className="w-3.5 h-3.5 text-slate-400" />
-                  Oxirgi ko'rilgan viloyatlar
+                  {t.recentProvinces}
                 </span>
                 <button
                   type="button"
                   onClick={clearAllRecent}
-                  className="text-[11px] font-normal text-slate-400 hover:text-red-500 transition-colors"
+                  className="text-[11px] font-normal text-slate-400 hover:text-red-500 transition-colors capitalize"
                 >
-                  Tozalash
+                  {t.clearAll}
                 </button>
               </div>
               <div className="flex flex-wrap gap-1.5 px-2 pt-1 pb-1">
@@ -298,17 +285,17 @@ export function CitySearch({ onSelectCity, currentCity }: CitySearchProps) {
               {query.trim().length >= 2 ? (
                 <>
                   <Globe2 className="w-3.5 h-3.5 text-sky-500" />
-                  Viloyat va Davlat natijalari
+                  {t.searchResultTitle}
                 </>
               ) : (
                 <>
                   <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                  O'zbekiston viloyatlari
+                  {t.defaultProvincesTitle}
                 </>
               )}
             </span>
             <span className="text-[11px] text-slate-400">
-              Tanlash: <kbd className="px-1 py-0.5 bg-slate-100 dark:bg-slate-800 rounded">↵ Enter</kbd>
+              {t.selectHint}: <kbd className="px-1 py-0.5 bg-slate-100 dark:bg-slate-800 rounded">↵ Enter</kbd>
             </span>
           </div>
 
@@ -332,8 +319,13 @@ export function CitySearch({ onSelectCity, currentCity }: CitySearchProps) {
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <span className="text-xl select-none">
-                        {getCountryFlag(item.countryCode)}
+                      {/* Stylized Country Code Badge */}
+                      <span className={`px-2 py-0.5 text-xs font-mono font-bold rounded-lg border ${
+                        isSelected
+                          ? "bg-white/20 border-white/40 text-white"
+                          : "bg-sky-50 dark:bg-slate-800 border-sky-200/60 dark:border-slate-700 text-sky-600 dark:text-sky-400"
+                      }`}>
+                        {item.countryCode || "REG"}
                       </span>
                       <div>
                         {/* Viloyat nomi */}
@@ -342,16 +334,13 @@ export function CitySearch({ onSelectCity, currentCity }: CitySearchProps) {
                         </div>
                         {/* Davlat nomi */}
                         <div
-                          className={`text-xs flex items-center gap-1 ${
+                          className={`text-xs ${
                             isSelected
                               ? "text-sky-100"
                               : "text-slate-500 dark:text-slate-400"
                           }`}
                         >
-                          <span>{item.country}</span>
-                          {item.countryCode && (
-                            <span className="opacity-75 font-mono">({item.countryCode})</span>
-                          )}
+                          {item.country}
                         </div>
                       </div>
                     </div>
@@ -364,7 +353,7 @@ export function CitySearch({ onSelectCity, currentCity }: CitySearchProps) {
                             : "bg-sky-100 dark:bg-sky-950 text-sky-600 dark:text-sky-400"
                         }`}
                       >
-                        Joriy
+                        {t.currentBadge}
                       </span>
                     )}
                   </button>
@@ -374,10 +363,10 @@ export function CitySearch({ onSelectCity, currentCity }: CitySearchProps) {
               <div className="p-6 text-center">
                 <MapPin className="w-8 h-8 text-slate-300 dark:text-slate-600 mx-auto mb-2 stroke-1" />
                 <p className="text-sm font-medium text-slate-600 dark:text-slate-300">
-                  "{query}" bo'yicha viloyat yoki davlat topilmadi
+                  "{query}" {t.notFoundProvince}
                 </p>
                 <p className="text-xs text-slate-400 mt-1">
-                  Viloyat yoki davlat nomini to'liqroq yozib ko'ring
+                  {t.notFoundHint}
                 </p>
               </div>
             )}

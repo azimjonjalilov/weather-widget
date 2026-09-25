@@ -15,13 +15,17 @@ import { useWeather } from "@/hooks/useWeather";
 import { useGeolocation } from "@/hooks/useGeolocation";
 import { useFavorites } from "@/hooks/useFavorites";
 import { WeatherUnit } from "@/types/weather";
+import { Language, translations } from "@/lib/i18n";
 import { AlertCircle } from "lucide-react";
 
 export function WeatherDashboard() {
   const [unit, setUnit] = useState<WeatherUnit>("metric");
   const [isDark, setIsDark] = useState<boolean>(false);
+  const [lang, setLang] = useState<Language>("uz");
   const [refreshInterval, setRefreshInterval] = useState<number>(10);
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+
+  const t = translations[lang] || translations.uz;
 
   // Geolocation
   const { coords, loading: gpsLoading, error: gpsError, getPosition, resetCoords } = useGeolocation();
@@ -35,7 +39,7 @@ export function WeatherDashboard() {
     changeCity,
     refresh,
   } = useWeather({
-    initialCity: "Namangan",
+    initialCity: "Toshkent",
     lat: coords?.lat,
     lon: coords?.lon,
     unit,
@@ -45,17 +49,36 @@ export function WeatherDashboard() {
   // Favorites Hook
   const { favorites, addFavorite, removeFavorite, isFavorite } = useFavorites();
 
-  // Dark mode class handler
+  // 1. Sayt ishga tushganda avtomatik ravishda Geolocation bo'yicha ma'lumot olish
   useEffect(() => {
-    const isDarkMode =
-      localStorage.getItem("weatherpulse_theme") === "dark" ||
-      (!localStorage.getItem("weatherpulse_theme") &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches);
-    setIsDark(isDarkMode);
-    if (isDarkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
+    // Brauzerda geolokatsiyani so'rash
+    if (navigator.geolocation) {
+      getPosition().catch(() => {
+        // Ruxsat berilmasa sukut bo'yicha shahar qoladi
+      });
+    }
+  }, [getPosition]);
+
+  // Dark mode & Language persistence
+  useEffect(() => {
+    try {
+      const savedTheme = localStorage.getItem("auracast_theme");
+      const isDarkMode =
+        savedTheme === "dark" ||
+        (!savedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      setIsDark(isDarkMode);
+      if (isDarkMode) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+
+      const savedLang = localStorage.getItem("auracast_lang") as Language;
+      if (savedLang && (savedLang === "uz" || savedLang === "ru" || savedLang === "en")) {
+        setLang(savedLang);
+      }
+    } catch (e) {
+      console.error(e);
     }
   }, []);
 
@@ -64,13 +87,22 @@ export function WeatherDashboard() {
       const next = !prev;
       if (next) {
         document.documentElement.classList.add("dark");
-        localStorage.setItem("weatherpulse_theme", "dark");
+        localStorage.setItem("auracast_theme", "dark");
       } else {
         document.documentElement.classList.remove("dark");
-        localStorage.setItem("weatherpulse_theme", "light");
+        localStorage.setItem("auracast_theme", "light");
       }
       return next;
     });
+  };
+
+  const handleLanguageChange = (newLang: Language) => {
+    setLang(newLang);
+    try {
+      localStorage.setItem("auracast_lang", newLang);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const toggleUnit = () => {
@@ -106,7 +138,7 @@ export function WeatherDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-indigo-50/30 to-purple-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-slate-50 to-indigo-50/40 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         {/* Header Bar */}
         <Header
@@ -119,12 +151,15 @@ export function WeatherDashboard() {
           onOpenSettings={() => setIsSettingsOpen(true)}
           onRefresh={refresh}
           refreshing={weatherLoading}
+          lang={lang}
+          onChangeLang={handleLanguageChange}
         />
 
         {/* Search Bar & City Selector */}
         <CitySearch
           onSelectCity={handleSelectCity}
           currentCity={data?.current.city || city}
+          lang={lang}
         />
 
         {/* Favorites Bar */}
@@ -135,20 +170,19 @@ export function WeatherDashboard() {
           onRemoveFavorite={removeFavorite}
           onAddCurrent={handleAddCurrentToFavorites}
           isCurrentFavorite={isFavorite(data?.current.city || city)}
+          lang={lang}
         />
 
         {/* Alerts / Notice if Fallback or Error */}
         {data?.isFallback && (
           <div className="flex items-center gap-2 p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-2xl text-xs sm:text-sm text-amber-700 dark:text-amber-400">
             <AlertCircle className="w-4 h-4 shrink-0" />
-            <span>
-              Tarmoq yoki API kalit cheklovi sababli ma'lumotlar zaxira (namoyish) rejimidan ko'rsatilmoqda.
-            </span>
+            <span>{t.fallbackNotice}</span>
           </div>
         )}
 
         {gpsError && (
-          <div className="flex items-center gap-2 p-3.5 bg-red-500/10 border border-red-500/30 rounded-2xl text-xs sm:text-sm text-red-600 dark:text-red-400">
+          <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/30 rounded-2xl text-xs text-red-600 dark:text-red-400">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{gpsError}</span>
           </div>
@@ -169,32 +203,35 @@ export function WeatherDashboard() {
             {/* Top Grid: Hero Weather Card & Key Metrics Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
               <div className="lg:col-span-6">
-                <HeroWeatherCard weather={data.current} unit={unit} />
+                <HeroWeatherCard weather={data.current} unit={unit} lang={lang} />
               </div>
               <div className="lg:col-span-6">
-                <MetricsGrid weather={data.current} unit={unit} />
+                <MetricsGrid weather={data.current} unit={unit} lang={lang} />
               </div>
             </div>
 
-            {/* Middle Section: Hourly Forecast Horizontal Scroll */}
-            <HourlyForecast hourly={data.hourly} unit={unit} />
+            {/* Middle Section: Hourly Forecast (24 Hours) Horizontal Slider */}
+            <HourlyForecast hourly={data.hourly} unit={unit} lang={lang} />
 
             {/* Bottom Grid: Temperature Dynamics Chart & 5-Day Forecast */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               <div className="lg:col-span-7">
-                <WeatherChart hourly={data.hourly} unit={unit} isDark={isDark} />
+                <WeatherChart hourly={data.hourly} unit={unit} isDark={isDark} lang={lang} />
               </div>
               <div className="lg:col-span-5">
-                <DailyForecast daily={data.daily} unit={unit} />
+                <DailyForecast daily={data.daily} unit={unit} lang={lang} />
               </div>
             </div>
           </div>
         ) : null}
 
         {/* Footer */}
-        <footer className="pt-6 pb-2 text-center text-xs text-slate-400 dark:text-slate-500">
-          <p>
-            WeatherPulse © {new Date().getFullYear()} • OpenWeatherMap API orqali ta'minlangan
+        <footer className="pt-8 pb-4 text-center text-xs text-slate-400 dark:text-slate-500 space-y-1">
+          <p className="font-medium">
+            {t.appName} PRO © {new Date().getFullYear()} • OpenWeatherMap Engine
+          </p>
+          <p className="text-[11px] opacity-75">
+            Designed for precision & clarity. Built with Next.js & TypeScript.
           </p>
         </footer>
       </div>
@@ -207,6 +244,7 @@ export function WeatherDashboard() {
         onChangeUnit={setUnit}
         interval={refreshInterval}
         onChangeInterval={setRefreshInterval}
+        lang={lang}
       />
     </div>
   );

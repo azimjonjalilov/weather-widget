@@ -10,13 +10,16 @@ import {
   Sunrise,
 } from "lucide-react";
 import { CurrentWeather, WeatherUnit } from "@/types/weather";
+import { Language, translations } from "@/lib/i18n";
 
 interface MetricsGridProps {
   weather: CurrentWeather;
   unit: WeatherUnit;
+  lang?: Language;
 }
 
-export function MetricsGrid({ weather, unit }: MetricsGridProps) {
+export function MetricsGrid({ weather, unit, lang = "uz" }: MetricsGridProps) {
+  const t = translations[lang] || translations.uz;
   const [mounted, setMounted] = useState(false);
   const isC = unit === "metric";
   const speedUnit = isC ? "m/s" : "mph";
@@ -28,7 +31,8 @@ export function MetricsGrid({ weather, unit }: MetricsGridProps) {
   const formatSunTime = (timestamp: number) => {
     if (!timestamp || !mounted) return "--:--";
     try {
-      return new Date(timestamp * 1000).toLocaleTimeString("uz-UZ", {
+      const localeMap = { uz: "uz-UZ", ru: "ru-RU", en: "en-US" };
+      return new Date(timestamp * 1000).toLocaleTimeString(localeMap[lang] || "uz-UZ", {
         hour: "2-digit",
         minute: "2-digit",
       });
@@ -38,7 +42,7 @@ export function MetricsGrid({ weather, unit }: MetricsGridProps) {
   };
 
   const getWindDirectionName = (deg: number) => {
-    const directions = ["Shimol", "Sh.-Sharq", "Sharq", "J.-Sharq", "Janub", "J.-G'arb", "G'arb", "Sh.-G'arb"];
+    const directions = t.windDirections;
     const index = Math.round((deg || 0) / 45) % 8;
     return directions[index];
   };
@@ -46,7 +50,7 @@ export function MetricsGrid({ weather, unit }: MetricsGridProps) {
   const metrics = [
     {
       id: "wind",
-      title: "Shamol tezligi",
+      title: t.windSpeed,
       value: `${weather.wind_speed} ${speedUnit}`,
       sub: `${getWindDirectionName(weather.wind_deg)} (${weather.wind_deg}°)`,
       icon: Wind,
@@ -55,45 +59,45 @@ export function MetricsGrid({ weather, unit }: MetricsGridProps) {
     },
     {
       id: "humidity",
-      title: "Havo namligi",
+      title: t.humidity,
       value: `${weather.humidity}%`,
-      sub: weather.humidity > 60 ? "Yuqori namlik" : "Qulay holat",
+      sub: weather.humidity > 60 ? t.highHumidity : t.comfortable,
       icon: Droplets,
       color: "from-cyan-500 to-blue-500",
       accent: "text-cyan-500",
     },
     {
       id: "pressure",
-      title: "Atmosfera bosimi",
+      title: t.pressure,
       value: `${weather.pressure} hPa`,
-      sub: "Normal: 1013 hPa",
+      sub: t.normalPressure,
       icon: Gauge,
       color: "from-violet-500 to-indigo-500",
       accent: "text-indigo-500",
     },
     {
       id: "visibility",
-      title: "Ko'rinuvchanlik",
+      title: t.visibility,
       value: `${((weather.visibility || 10000) / 1000).toFixed(1)} km`,
-      sub: (weather.visibility || 10000) > 8000 ? "Juda yaxshi" : "Cheklangan",
+      sub: (weather.visibility || 10000) > 8000 ? t.veryGood : t.limited,
       icon: Eye,
       color: "from-emerald-500 to-teal-400",
       accent: "text-emerald-500",
     },
     {
       id: "clouds",
-      title: "Bulutlilik",
+      title: t.cloudiness,
       value: `${weather.clouds}%`,
-      sub: weather.clouds > 50 ? "Qalin bulutlar" : "Ochiq osmon",
+      sub: weather.clouds > 50 ? t.denseClouds : t.clearSky,
       icon: Cloud,
       color: "from-slate-500 to-zinc-400",
       accent: "text-slate-400",
     },
     {
       id: "sun",
-      title: "Quyosh chiqishi / botishi",
+      title: t.sunTimes,
       value: formatSunTime(weather.sunrise),
-      sub: `Botishi: ${formatSunTime(weather.sunset)}`,
+      sub: `${t.sunsetPrefix}: ${formatSunTime(weather.sunset)}`,
       icon: Sunrise,
       color: "from-amber-500 to-orange-400",
       accent: "text-amber-500",
@@ -102,16 +106,16 @@ export function MetricsGrid({ weather, unit }: MetricsGridProps) {
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-4">
       {metrics.map((item) => {
         const Icon = item.icon;
         return (
           <div
             key={item.id}
-            className="flex flex-col justify-between p-4 sm:p-5 rounded-2xl bg-white/50 dark:bg-slate-900/50 backdrop-blur-md border border-white/30 dark:border-slate-800/70 shadow-sm hover:shadow-md hover:border-sky-300/40 dark:hover:border-slate-700 transition-all duration-200"
+            className="flex flex-col justify-between p-4 sm:p-5 rounded-2xl bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-white/40 dark:border-slate-800/80 shadow-sm hover:shadow-md hover:border-sky-300/40 dark:hover:border-slate-700 transition-all duration-200"
           >
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
+              <span className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400">
                 {item.title}
               </span>
               <div className={`p-2 rounded-xl bg-gradient-to-tr ${item.color} text-white shadow-sm`}>
@@ -121,13 +125,13 @@ export function MetricsGrid({ weather, unit }: MetricsGridProps) {
 
             <div>
               <div
-                className="text-lg sm:text-xl font-bold text-slate-800 dark:text-slate-100"
+                className="text-lg sm:text-xl font-extrabold text-slate-800 dark:text-slate-100 font-mono tracking-tight"
                 suppressHydrationWarning={item.isSun}
               >
                 {item.value}
               </div>
               <div
-                className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate"
+                className="text-xs text-slate-500 dark:text-slate-400 mt-1 truncate font-medium"
                 suppressHydrationWarning={item.isSun}
               >
                 {item.sub}

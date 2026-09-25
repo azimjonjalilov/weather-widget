@@ -3,6 +3,7 @@
 import React from "react";
 import { Star, MapPin, X } from "lucide-react";
 import { FavoriteCity } from "@/types/weather";
+import { Language, translations } from "@/lib/i18n";
 
 interface FavoritesBarProps {
   favorites: FavoriteCity[];
@@ -11,6 +12,7 @@ interface FavoritesBarProps {
   onRemoveFavorite: (name: string) => void;
   onAddCurrent: () => void;
   isCurrentFavorite: boolean;
+  lang?: Language;
 }
 
 export function FavoritesBar({
@@ -20,7 +22,10 @@ export function FavoritesBar({
   onRemoveFavorite,
   onAddCurrent,
   isCurrentFavorite,
+  lang = "uz",
 }: FavoritesBarProps) {
+  const t = translations[lang] || translations.uz;
+
   return (
     <div className="w-full flex items-center gap-2 overflow-x-auto pb-1 pt-1 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700">
       {/* Add / Favorited Button */}
@@ -33,7 +38,7 @@ export function FavoritesBar({
         }`}
       >
         <Star className={`w-3.5 h-3.5 ${isCurrentFavorite ? "fill-amber-500 text-amber-500" : ""}`} />
-        <span>{isCurrentFavorite ? "Saqlangan" : "Sevimliga qo'shish"}</span>
+        <span>{isCurrentFavorite ? t.favoritesSaved : t.favoritesAdd}</span>
       </button>
 
       {/* Favorite Chips */}

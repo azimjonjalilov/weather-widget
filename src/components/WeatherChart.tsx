@@ -10,14 +10,18 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { HourlyForecastItem, WeatherUnit } from "@/types/weather";
+import { Language, translations } from "@/lib/i18n";
+import { TrendingUp } from "lucide-react";
 
 interface WeatherChartProps {
   hourly: HourlyForecastItem[];
   unit: WeatherUnit;
   isDark: boolean;
+  lang?: Language;
 }
 
-export function WeatherChart({ hourly, unit, isDark }: WeatherChartProps) {
+export function WeatherChart({ hourly, unit, isDark, lang = "uz" }: WeatherChartProps) {
+  const t = translations[lang] || translations.uz;
   const [mounted, setMounted] = useState(false);
   const tempUnit = unit === "metric" ? "°C" : "°F";
 
@@ -27,7 +31,7 @@ export function WeatherChart({ hourly, unit, isDark }: WeatherChartProps) {
 
   if (!mounted || !hourly || hourly.length === 0) {
     return (
-      <div className="w-full bg-white/50 dark:bg-slate-900/50 backdrop-blur-md rounded-2xl p-5 border border-white/30 dark:border-slate-800/70 shadow-sm">
+      <div className="w-full bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-3xl p-5 border border-white/40 dark:border-slate-800/80 shadow-lg">
         <div className="h-64 w-full bg-slate-100/50 dark:bg-slate-800/40 rounded-2xl animate-pulse" />
       </div>
     );
@@ -43,14 +47,16 @@ export function WeatherChart({ hourly, unit, isDark }: WeatherChartProps) {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-3 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl text-xs">
-          <p className="font-semibold text-slate-700 dark:text-slate-200 mb-1">{label}</p>
-          <p className="text-sky-600 dark:text-sky-400 font-bold">
-            Harorat: {payload[0].value}{tempUnit}
+        <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl text-xs space-y-1">
+          <p className="font-bold text-slate-700 dark:text-slate-200">{label}</p>
+          <p className="text-sky-600 dark:text-sky-400 font-extrabold flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-sky-500" />
+            {t.chartTemp}: {payload[0].value}{tempUnit}
           </p>
           {payload[1] && (
-            <p className="text-indigo-500 font-medium">
-              His etilishi: {payload[1].value}{tempUnit}
+            <p className="text-indigo-500 font-semibold flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-indigo-400" />
+              {t.chartFeelsLike}: {payload[1].value}{tempUnit}
             </p>
           )}
         </div>
@@ -60,22 +66,27 @@ export function WeatherChart({ hourly, unit, isDark }: WeatherChartProps) {
   };
 
   return (
-    <div className="w-full bg-white/50 dark:bg-slate-900/50 backdrop-blur-md rounded-2xl p-5 border border-white/30 dark:border-slate-800/70 shadow-sm">
+    <div className="w-full bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-3xl p-5 sm:p-6 border border-white/40 dark:border-slate-800/80 shadow-lg">
       <div className="flex items-center justify-between mb-4">
-        <div>
-          <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">
-            Harorat dinamikasi
-          </h3>
-          <p className="text-xs text-slate-400">Kun davomidagi o'zgarish grafigi</p>
+        <div className="flex items-center gap-2">
+          <div className="p-1.5 rounded-xl bg-sky-500/10 text-sky-500 dark:bg-sky-400/10">
+            <TrendingUp className="w-4 h-4" />
+          </div>
+          <div>
+            <h3 className="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100">
+              {t.chartTitle}
+            </h3>
+            <p className="text-xs text-slate-400">{t.chartSubtitle}</p>
+          </div>
         </div>
         <div className="flex items-center gap-3 text-xs">
-          <div className="flex items-center gap-1.5 text-sky-500 font-medium">
+          <div className="flex items-center gap-1.5 text-sky-500 font-semibold">
             <span className="w-2.5 h-2.5 rounded-full bg-sky-500" />
-            <span>Harorat</span>
+            <span>{t.chartTemp}</span>
           </div>
-          <div className="flex items-center gap-1.5 text-indigo-400 font-medium">
+          <div className="flex items-center gap-1.5 text-indigo-400 font-semibold">
             <span className="w-2.5 h-2.5 rounded-full bg-indigo-400" />
-            <span>His etilishi</span>
+            <span>{t.chartFeelsLike}</span>
           </div>
         </div>
       </div>

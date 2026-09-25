@@ -1,0 +1,16 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="auraSun" x1="8" y1="8" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F59E0B" />
+      <stop offset="0.5" stop-color="#EC4899" />
+      <stop offset="1" stop-color="#6366F1" />
+    </linearGradient>
+    <linearGradient id="auraSky" x1="12" y1="20" x2="36" y2="38" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38BDF8" />
+      <stop offset="1" stop-color="#2563EB" />
+    </linearGradient>
+  </defs>
+  <circle cx="24" cy="24" r="22" fill="#0F172A" />
+  <circle cx="24" cy="24" r="14" fill="url(#auraSun)" />
+  <path d="M14 28C14 24.6863 16.6863 22 20 22C20.8 22 21.56 22.15 22.25 22.43C23.35 19.8 25.96 18 29 18C33.4183 18 37 21.5817 37 26C37 26.35 36.98 26.7 36.93 27.04C38.71 27.58 40 29.23 40 31.2C40 33.63 38.03 35.6 35.6 35.6H17.4C14.42 35.6 12 33.18 12 30.2C12 29.07 12.35 28.02 12.95 27.16" fill="url(#auraSky)" />
+</svg>
