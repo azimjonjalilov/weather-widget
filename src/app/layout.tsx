@@ -12,9 +12,9 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "AuraCast — Aniq Ob-havo Platformasi | Real-time Weather",
+  title: "WeatherScope — Aniq Ob-havo Platformasi | Real-time Weather",
   description:
-    "AuraCast — O'zbekiston viloyatlari va dunyo bo'ylab har soatlik va 5 kunlik aniq ob-havo prognozi, shamol tezligi, havo namligi, atmosfera bosimi hamda interaktiv harorat grafiki.",
+    "WeatherScope — O'zbekiston viloyatlari va dunyo bo'ylab har soatlik va 5 kunlik aniq ob-havo prognozi, shamol tezligi, havo namligi, atmosfera bosimi hamda interaktiv harorat grafiki.",
   keywords: [
     "ob-havo",
     "ob havo toshkent",
@@ -22,22 +22,22 @@ export const metadata: Metadata = {
     "pogoda samarkand",
     "ob havo prognozi",
     "soatlik ob-havo",
-    "AuraCast",
+    "WeatherScope",
     "weather widget",
     "harorat",
   ],
   authors: [{ name: "Azimjon Jalilov" }],
   creator: "Azimjon Jalilov",
-  publisher: "AuraCast Inc.",
-  metadataBase: new URL("https://auracast.app"),
+  publisher: "WeatherScope Inc.",
+  metadataBase: new URL("https://weatherscope.app"),
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "AuraCast — Haqiqiy Vaqtda Aniq Ob-havo Platformasi",
+    title: "WeatherScope — Haqiqiy Vaqtda Aniq Ob-havo Platformasi",
     description: "Viloyatlar va butun dunyo bo'yicha 24 soatlik va 5 kunlik yuqori aniqlikdagi ob-havo.",
-    url: "https://auracast.app",
-    siteName: "AuraCast",
+    url: "https://weatherscope.app",
+    siteName: "WeatherScope",
     locale: "uz_UZ",
     type: "website",
   },

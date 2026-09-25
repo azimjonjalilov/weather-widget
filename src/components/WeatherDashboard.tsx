@@ -213,15 +213,11 @@ export function WeatherDashboard() {
             {/* Middle Section: Hourly Forecast (24 Hours) Horizontal Slider */}
             <HourlyForecast hourly={data.hourly} unit={unit} lang={lang} />
 
-            {/* Bottom Grid: Temperature Dynamics Chart & 5-Day Forecast */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              <div className="lg:col-span-7">
-                <WeatherChart hourly={data.hourly} unit={unit} isDark={isDark} lang={lang} />
-              </div>
-              <div className="lg:col-span-5">
-                <DailyForecast daily={data.daily} unit={unit} lang={lang} />
-              </div>
-            </div>
+            {/* 5-Day Forecast Showcase Cards (5 Responsive Columns) */}
+            <DailyForecast daily={data.daily} unit={unit} lang={lang} />
+
+            {/* Temperature Dynamics Chart */}
+            <WeatherChart hourly={data.hourly} unit={unit} isDark={isDark} lang={lang} />
           </div>
         ) : null}
 

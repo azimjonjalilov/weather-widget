@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Navigation, Moon, Sun, Settings, RefreshCw, Languages, ChevronDown } from "lucide-react";
 import { WeatherUnit } from "@/types/weather";
-import { AuraCastLogo } from "@/components/AuraCastLogo";
+import { WeatherScopeLogo } from "@/components/WeatherScopeLogo";
 import { Language, translations } from "@/lib/i18n";
 
 interface HeaderProps {
@@ -58,7 +58,7 @@ export function Header({
       {/* Brand & Logo */}
       <div className="flex items-center gap-3">
         <div className="p-1 rounded-2xl bg-gradient-to-tr from-amber-500/20 via-sky-500/20 to-indigo-500/20 shadow-md shadow-sky-500/10">
-          <AuraCastLogo size={38} className="animate-float" />
+          <WeatherScopeLogo size={40} className="animate-float" />
         </div>
         <div>
           <div className="flex items-center gap-2">

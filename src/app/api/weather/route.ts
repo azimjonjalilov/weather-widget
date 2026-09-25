@@ -4,56 +4,63 @@ import { WeatherResponse, HourlyForecastItem, DailyForecastItem } from "@/types/
 const API_KEY = process.env.OWM_API_KEY || "a9ae2ba11a4327cdc44e0838914137bc";
 const BASE_URL = "https://api.openweathermap.org/data/2.5";
 
-// Har bir soat uchun 24 ta soatlik ma'lumot yasovchi interpolyatsiya funksiyasi
+// Har bir soat uchun ob-havo holati va ikonkalari bilan 24 soatlik prognoz yasovchi funksiya
 function generate24HourlyForecast(rawList: any[], baseTemp: number, isC: boolean): HourlyForecastItem[] {
   const result: HourlyForecastItem[] = [];
   const now = new Date();
-  const currentHour = now.getHours();
 
   if (!rawList || rawList.length === 0) {
-    // Fallback 24 soat
     for (let i = 0; i < 24; i++) {
       const hourDate = new Date(now.getTime() + i * 3600 * 1000);
-      const h = hourDate.getHours().toString().padStart(2, "0");
-      const delta = Math.sin((currentHour + i) / 3.8) * 4;
-      const isNight = hourDate.getHours() < 6 || hourDate.getHours() > 20;
+      const hourVal = hourDate.getHours();
+      const h = hourVal.toString().padStart(2, "0");
+      const isNight = hourVal < 6 || hourVal >= 20;
+      const delta = Math.sin((hourVal - 9) / 3.8) * 4;
 
       result.push({
         dt: Math.floor(hourDate.getTime() / 1000),
         time: `${h}:00`,
         temp: Math.round(baseTemp + delta),
         feels_like: Math.round(baseTemp + delta - 1),
-        pop: Math.round(Math.abs(Math.sin(i)) * 25),
+        pop: Math.round(Math.abs(Math.sin(i)) * 20),
         icon: isNight ? "01n" : "01d",
         description: isNight ? "Ochiq tun" : "Quyoshli havo",
         condition: "Clear",
-        wind_speed: +(isC ? 3.0 + (i % 3) * 0.5 : 7.0 + (i % 3)).toFixed(1),
-        humidity: Math.round(40 + Math.sin(i) * 15),
+        wind_speed: +(isC ? 3.0 + (i % 3) * 0.4 : 6.8 + (i % 3)).toFixed(1),
+        humidity: Math.round(42 + Math.sin(i) * 12),
       });
     }
     return result;
   }
 
-  // OWM 3 soatlik nuqtalarini har soatga interpolyatsiya qilish
+  // OWM dan kelgan real prognoz ma'lumotlari bo'yicha 24 soatni hisoblash
   for (let i = 0; i < 24; i++) {
     const targetTime = now.getTime() + i * 3600 * 1000;
     const targetDt = Math.floor(targetTime / 1000);
     const hourDate = new Date(targetTime);
-    const h = hourDate.getHours().toString().padStart(2, "0");
+    const hourVal = hourDate.getHours();
+    const h = hourVal.toString().padStart(2, "0");
+    const isNight = hourVal < 6 || hourVal >= 20;
 
-    // Eng yaqin OWM nuqtalarini topamiz
-    let prevItem = rawList[0];
-    let nextItem = rawList[0];
+    // targetDt ga eng yaqin bo'lgan OWM nuqtasini topish
+    let closestItem = rawList[0];
+    let minDiff = Math.abs(rawList[0].dt - targetDt);
 
+    for (let j = 0; j < rawList.length; j++) {
+      const diff = Math.abs(rawList[j].dt - targetDt);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closestItem = rawList[j];
+      }
+    }
+
+    // Interpolyatsiya uchun oldingi va keyingi nuqtalar
+    let prevItem = closestItem;
+    let nextItem = closestItem;
     for (let j = 0; j < rawList.length - 1; j++) {
       if (rawList[j].dt <= targetDt && rawList[j + 1].dt >= targetDt) {
         prevItem = rawList[j];
         nextItem = rawList[j + 1];
-        break;
-      }
-      if (rawList[j].dt > targetDt) {
-        prevItem = rawList[j];
-        nextItem = rawList[j];
         break;
       }
     }
@@ -64,17 +71,18 @@ function generate24HourlyForecast(rawList: any[], baseTemp: number, isC: boolean
     const temp = Math.round(prevItem.main.temp + (nextItem.main.temp - prevItem.main.temp) * factor);
     const feels_like = Math.round(prevItem.main.feels_like + (nextItem.main.feels_like - prevItem.main.feels_like) * factor);
     const pop = Math.round(((prevItem.pop || 0) + ((nextItem.pop || 0) - (prevItem.pop || 0)) * factor) * 100);
-    const wind_speed = +(prevItem.wind?.speed || 3.5).toFixed(1);
+    const wind_speed = +(closestItem.wind?.speed || 3.5).toFixed(1);
     const humidity = Math.round(prevItem.main.humidity + (nextItem.main.humidity - prevItem.main.humidity) * factor);
 
-    const activeItem = factor > 0.5 ? nextItem : prevItem;
-    const isNight = hourDate.getHours() < 6 || hourDate.getHours() > 20;
-    let icon = activeItem.weather?.[0]?.icon || "01d";
-    if (isNight && icon.endsWith("d")) {
-      icon = icon.replace("d", "n");
-    } else if (!isNight && icon.endsWith("n")) {
-      icon = icon.replace("n", "d");
-    }
+    // Eng yaqin nuqtaning haqiqiy ob-havo holati va tavsifi
+    const rawWeather = closestItem.weather?.[0] || {};
+    let icon = rawWeather.icon || "01d";
+    const condition = rawWeather.main || "Clear";
+    const description = rawWeather.description || "Ochiq";
+
+    // Kunduz / tun holatini soatiga qat'iy moslashtirish (kunduz: d, tun: n)
+    const iconCodeNumber = icon.slice(0, 2);
+    icon = `${iconCodeNumber}${isNight ? "n" : "d"}`;
 
     result.push({
       dt: targetDt,
@@ -83,8 +91,8 @@ function generate24HourlyForecast(rawList: any[], baseTemp: number, isC: boolean
       feels_like,
       pop,
       icon,
-      description: activeItem.weather?.[0]?.description || "Ochiq osmon",
-      condition: activeItem.weather?.[0]?.main || "Clear",
+      description,
+      condition,
       wind_speed,
       humidity,
     });
@@ -218,7 +226,7 @@ export async function GET(request: NextRequest) {
     };
 
     const rawList = forecastData.list || [];
-    // 24 soatlik to'liq har bir soat uchun hisoblash
+    // 24 soatlik to'liq har bir soat uchun hisoblash (har soat o'z ob-havo holati va ikonkasiga ega)
     const hourly = generate24HourlyForecast(rawList, current.temp, isC);
 
     // 5 kunlik prognoz guruhlash
