@@ -66,20 +66,20 @@ export function WeatherChart({ hourly, unit, isDark, lang = "uz" }: WeatherChart
   };
 
   return (
-    <div className="w-full bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-3xl p-5 sm:p-6 border border-white/40 dark:border-slate-800/80 shadow-lg">
-      <div className="flex items-center justify-between mb-4">
+    <div className="w-full bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 border border-white/40 dark:border-slate-800/80 shadow-lg">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4 mb-4">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-xl bg-sky-500/10 text-sky-500 dark:bg-sky-400/10">
+          <div className="p-1.5 rounded-xl bg-sky-500/10 text-sky-500 dark:bg-sky-400/10 shrink-0">
             <TrendingUp className="w-4 h-4" />
           </div>
           <div>
             <h3 className="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100">
               {t.chartTitle}
             </h3>
-            <p className="text-xs text-slate-400">{t.chartSubtitle}</p>
+            <p className="text-[11px] sm:text-xs text-slate-400">{t.chartSubtitle}</p>
           </div>
         </div>
-        <div className="flex items-center gap-3 text-xs">
+        <div className="flex items-center gap-3 text-xs self-start sm:self-auto pl-7 sm:pl-0">
           <div className="flex items-center gap-1.5 text-sky-500 font-semibold">
             <span className="w-2.5 h-2.5 rounded-full bg-sky-500" />
             <span>{t.chartTemp}</span>
@@ -91,9 +91,9 @@ export function WeatherChart({ hourly, unit, isDark, lang = "uz" }: WeatherChart
         </div>
       </div>
 
-      <div className="h-56 w-full min-w-0">
-        <ResponsiveContainer width="100%" height={224}>
-          <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+      <div className="h-48 sm:h-56 w-full min-w-0">
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -22, bottom: 0 }}>
             <defs>
               <linearGradient id="tempGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.4} />

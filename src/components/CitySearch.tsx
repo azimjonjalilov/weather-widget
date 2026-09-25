@@ -208,7 +208,7 @@ export function CitySearch({ onSelectCity, currentCity, lang = "uz" }: CitySearc
           onFocus={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
           placeholder={t.searchPlaceholder}
-          className="w-full pl-11 pr-24 py-3.5 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl rounded-2xl border border-white/50 dark:border-slate-700/60 text-slate-800 dark:text-slate-100 placeholder-slate-400 text-sm shadow-md focus:outline-none focus:ring-2 focus:ring-sky-500/50 dark:focus:ring-sky-400/50 transition-all duration-200"
+          className="w-full pl-11 pr-20 sm:pr-24 py-3 sm:py-3.5 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl rounded-2xl border border-white/50 dark:border-slate-700/60 text-slate-800 dark:text-slate-100 placeholder-slate-400 text-base sm:text-sm shadow-md focus:outline-none focus:ring-2 focus:ring-sky-500/50 dark:focus:ring-sky-400/50 transition-all duration-200"
         />
 
         {/* Right side controls */}
@@ -225,7 +225,7 @@ export function CitySearch({ onSelectCity, currentCity, lang = "uz" }: CitySearc
                 setApiResults([]);
                 inputRef.current?.focus();
               }}
-              className="p-1 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="p-1.5 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
@@ -239,7 +239,7 @@ export function CitySearch({ onSelectCity, currentCity, lang = "uz" }: CitySearc
 
       {/* Dropdown Ro'yxat */}
       {isOpen && (
-        <div className="absolute z-50 top-full mt-2 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute z-50 top-full mt-2 w-full max-h-[75vh] sm:max-h-[420px] flex flex-col bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
           
           {/* Oxirgi qidirilgan viloyatlar */}
           {!query.trim() && recentSearches.length > 0 && (

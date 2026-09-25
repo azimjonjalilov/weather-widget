@@ -137,7 +137,7 @@ export function WeatherDashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-slate-50 to-indigo-50/40 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
         {/* Header Bar */}
         <Header
           unit={unit}
@@ -173,7 +173,7 @@ export function WeatherDashboard() {
 
         {/* Alerts / Notice if Fallback or Error */}
         {data?.isFallback && (
-          <div className="flex items-center gap-2 p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-2xl text-xs sm:text-sm text-amber-700 dark:text-amber-400">
+          <div className="flex items-center gap-2 p-3 sm:p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-2xl text-xs sm:text-sm text-amber-700 dark:text-amber-400">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{t.fallbackNotice}</span>
           </div>
@@ -187,7 +187,7 @@ export function WeatherDashboard() {
         )}
 
         {weatherError && (
-          <div className="flex items-center gap-2 p-3.5 bg-red-500/10 border border-red-500/30 rounded-2xl text-xs sm:text-sm text-red-600 dark:text-red-400">
+          <div className="flex items-center gap-2 p-3 sm:p-3.5 bg-red-500/10 border border-red-500/30 rounded-2xl text-xs sm:text-sm text-red-600 dark:text-red-400">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{weatherError}</span>
           </div>
@@ -197,9 +197,9 @@ export function WeatherDashboard() {
         {weatherLoading && !data ? (
           <WeatherSkeleton />
         ) : data ? (
-          <div className="space-y-6 animate-in fade-in duration-300">
+          <div className="space-y-4 sm:space-y-6 animate-in fade-in duration-300">
             {/* Top Grid: Hero Weather Card & Key Metrics Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start">
               <div className="lg:col-span-6">
                 <HeroWeatherCard weather={data.current} unit={unit} lang={lang} />
               </div>
@@ -220,7 +220,7 @@ export function WeatherDashboard() {
         ) : null}
 
         {/* Footer */}
-        <footer className="pt-8 pb-4 text-center text-xs text-slate-400 dark:text-slate-500 space-y-1">
+        <footer className="pt-6 sm:pt-8 pb-4 text-center text-xs text-slate-400 dark:text-slate-500 space-y-1.5">
           <p className="font-medium">
             {t.appName} PRO © {new Date().getFullYear()} • OpenWeatherMap Engine
           </p>

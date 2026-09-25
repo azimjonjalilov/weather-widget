@@ -106,32 +106,32 @@ export function MetricsGrid({ weather, unit, lang = "uz" }: MetricsGridProps) {
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3.5 md:gap-4">
       {metrics.map((item) => {
         const Icon = item.icon;
         return (
           <div
             key={item.id}
-            className="flex flex-col justify-between p-4 sm:p-5 rounded-2xl bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-white/40 dark:border-slate-800/80 shadow-sm hover:shadow-md hover:border-sky-300/40 dark:hover:border-slate-700 transition-all duration-200"
+            className="flex flex-col justify-between p-3.5 sm:p-4 md:p-5 rounded-2xl bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-white/40 dark:border-slate-800/80 shadow-sm hover:shadow-md hover:border-sky-300/40 dark:hover:border-slate-700 transition-all duration-200 min-w-0"
           >
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400">
+            <div className="flex items-center justify-between gap-1 mb-2.5 sm:mb-3">
+              <span className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 truncate">
                 {item.title}
               </span>
-              <div className={`p-2 rounded-xl bg-gradient-to-tr ${item.color} text-white shadow-sm`}>
-                <Icon className="w-4 h-4" />
+              <div className={`p-1.5 sm:p-2 rounded-xl bg-gradient-to-tr ${item.color} text-white shadow-sm shrink-0`}>
+                <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
             </div>
 
-            <div>
+            <div className="min-w-0">
               <div
-                className="text-lg sm:text-xl font-extrabold text-slate-800 dark:text-slate-100 font-mono tracking-tight"
+                className="text-base sm:text-lg md:text-xl font-extrabold text-slate-800 dark:text-slate-100 font-mono tracking-tight truncate"
                 suppressHydrationWarning={item.isSun}
               >
                 {item.value}
               </div>
               <div
-                className="text-xs text-slate-500 dark:text-slate-400 mt-1 truncate font-medium"
+                className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5 sm:mt-1 truncate font-medium"
                 suppressHydrationWarning={item.isSun}
               >
                 {item.sub}

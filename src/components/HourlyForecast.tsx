@@ -26,23 +26,23 @@ export function HourlyForecast({ hourly, unit, lang = "uz" }: HourlyForecastProp
   };
 
   return (
-    <div className="w-full bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-3xl p-5 sm:p-6 border border-white/40 dark:border-slate-800/80 shadow-lg">
+    <div className="w-full bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 border border-white/40 dark:border-slate-800/80 shadow-lg">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-3.5 sm:mb-4">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-xl bg-sky-500/10 text-sky-500 dark:bg-sky-400/10">
+          <div className="p-1.5 rounded-xl bg-sky-500/10 text-sky-500 dark:bg-sky-400/10 shrink-0">
             <Clock className="w-4 h-4" />
           </div>
           <div>
             <h3 className="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100">
               {t.hourlyTitle}
             </h3>
-            <p className="text-xs text-slate-400">{t.hourlySubtitle}</p>
+            <p className="text-[11px] sm:text-xs text-slate-400">{t.hourlySubtitle}</p>
           </div>
         </div>
 
         {/* Scroll Controls */}
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1 sm:gap-1.5">
           <button
             onClick={() => scroll("left")}
             className="p-1.5 rounded-xl bg-white/80 dark:bg-slate-800/80 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700 shadow-sm transition-all active:scale-95"
@@ -63,14 +63,14 @@ export function HourlyForecast({ hourly, unit, lang = "uz" }: HourlyForecastProp
       {/* 24-Hour Slider */}
       <div
         ref={scrollRef}
-        className="flex items-center gap-2.5 overflow-x-auto pb-2 pt-1 scroll-smooth scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700"
+        className="flex items-center gap-2 sm:gap-2.5 overflow-x-auto pb-2 pt-1 scroll-smooth snap-x snap-mandatory scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700"
       >
         {hourly.map((item, idx) => {
           const isNow = idx === 0;
           return (
             <div
               key={`${item.dt}-${idx}`}
-              className={`flex flex-col items-center justify-between min-w-[84px] py-3.5 px-2.5 rounded-2xl border transition-all duration-200 group shrink-0 ${
+              className={`flex flex-col items-center justify-between min-w-[76px] sm:min-w-[84px] py-3 sm:py-3.5 px-2 sm:px-2.5 rounded-2xl border snap-start transition-all duration-200 group shrink-0 ${
                 isNow
                   ? "bg-gradient-to-b from-sky-500/15 via-indigo-500/10 to-transparent border-sky-400/50 shadow-md shadow-sky-500/10"
                   : "bg-white/60 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 border-slate-200/60 dark:border-slate-700/60 hover:shadow-sm"
