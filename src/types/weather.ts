@@ -44,6 +44,8 @@ export interface HourlyForecastItem {
 export interface DailyForecastItem {
   date: string;
   dayName: string;
+  dayIndex: number;
+  dateRaw?: string;
   temp_min: number;
   temp_max: number;
   temp_day: number;

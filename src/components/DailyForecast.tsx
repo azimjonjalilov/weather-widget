@@ -15,6 +15,7 @@ interface DailyForecastProps {
 export function DailyForecast({ daily, unit, lang = "uz" }: DailyForecastProps) {
   const t = translations[lang] || translations.uz;
   const tempUnit = unit === "metric" ? "°" : "°F";
+  const localeMap = { uz: "uz-UZ", ru: "ru-RU", en: "en-US" };
 
   return (
     <div className="w-full bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-3xl p-5 sm:p-6 border border-white/40 dark:border-slate-800/80 shadow-lg">
@@ -32,14 +33,22 @@ export function DailyForecast({ daily, unit, lang = "uz" }: DailyForecastProps) 
           </div>
         </div>
         <span className="text-xs font-bold px-3 py-1 rounded-full bg-sky-500/10 dark:bg-sky-400/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
-          5 kunlik to'liq sharh
+          5 {lang === "en" ? "days" : lang === "ru" ? "дней" : "kun"}
         </span>
       </div>
 
-      {/* 5-Day Cards Grid: Desktopda 5 ustun, mobilda 2 ustun yoki qulay scroll */}
+      {/* 5-Day Cards Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 sm:gap-4">
         {daily.map((item, idx) => {
           const isToday = idx === 0;
+          const dayTitle = isToday ? t.today : t.weekDays[item.dayIndex] || "Kun";
+
+          const formattedDate = item.dateRaw
+            ? new Date(item.dateRaw).toLocaleDateString(localeMap[lang] || "uz-UZ", {
+                month: "short",
+                day: "numeric",
+              })
+            : item.date;
 
           return (
             <div
@@ -57,10 +66,10 @@ export function DailyForecast({ daily, unit, lang = "uz" }: DailyForecastProps) 
                     isToday ? "text-sky-600 dark:text-sky-400" : "text-slate-800 dark:text-slate-100"
                   }`}
                 >
-                  {isToday ? t.today : item.dayName}
+                  {dayTitle}
                 </span>
                 <span className="text-[11px] font-medium text-slate-400">
-                  {item.date}
+                  {formattedDate}
                 </span>
               </div>
 
@@ -78,7 +87,7 @@ export function DailyForecast({ daily, unit, lang = "uz" }: DailyForecastProps) 
                 </span>
               </div>
 
-              {/* Day & Night Clear Badges (Progress Bar o'rniga aniq Kunduz va Tun) */}
+              {/* Day & Night Clear Badges */}
               <div className="grid grid-cols-2 gap-1.5 my-2.5 p-1.5 rounded-xl bg-slate-100/70 dark:bg-slate-900/50 border border-slate-200/40 dark:border-slate-800/60">
                 {/* Kunduzi */}
                 <div className="flex flex-col items-center justify-center p-1.5 rounded-lg bg-amber-500/10 dark:bg-amber-400/10 border border-amber-500/20">
@@ -106,17 +115,17 @@ export function DailyForecast({ daily, unit, lang = "uz" }: DailyForecastProps) 
               {/* Bottom: Mini Metrics Badges */}
               <div className="pt-2.5 mt-1 border-t border-slate-200/40 dark:border-slate-700/40 grid grid-cols-3 gap-1 text-center text-[10px] text-slate-500 dark:text-slate-400 font-medium">
                 {/* Precipitation */}
-                <div className="flex flex-col items-center" title="Yog'ingarchilik ehtimoli">
+                <div className="flex flex-col items-center" title="Precipitation">
                   <Droplets className="w-3 h-3 text-sky-500 mb-0.5" />
                   <span>{item.pop}%</span>
                 </div>
                 {/* Wind */}
-                <div className="flex flex-col items-center" title="Shamol tezligi">
+                <div className="flex flex-col items-center" title="Wind">
                   <Wind className="w-3 h-3 text-indigo-400 mb-0.5" />
                   <span>{item.wind_speed}</span>
                 </div>
                 {/* Humidity */}
-                <div className="flex flex-col items-center" title="Namlik">
+                <div className="flex flex-col items-center" title="Humidity">
                   <Waves className="w-3 h-3 text-cyan-500 mb-0.5" />
                   <span>{item.humidity}%</span>
                 </div>

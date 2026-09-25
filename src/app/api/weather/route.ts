@@ -4,8 +4,39 @@ import { WeatherResponse, HourlyForecastItem, DailyForecastItem } from "@/types/
 const API_KEY = process.env.OWM_API_KEY || "a9ae2ba11a4327cdc44e0838914137bc";
 const BASE_URL = "https://api.openweathermap.org/data/2.5";
 
-// Har bir soat uchun ob-havo holati va ikonkalari bilan 24 soatlik prognoz yasovchi funksiya
-function generate24HourlyForecast(rawList: any[], baseTemp: number, isC: boolean): HourlyForecastItem[] {
+// O'zbek tilidagi ob-havo tavsiflari lug'ati
+const UZ_WEATHER_MAP: Record<string, string> = {
+  "clear sky": "Quyoshli, musaffo osmon",
+  "few clouds": "Kam bulutli",
+  "scattered clouds": "Tarqoq bulutli",
+  "broken clouds": "Qalin bulutli",
+  "overcast clouds": "To'liq bulutli osmon",
+  "light rain": "Mayda shivalovchi yomg'ir",
+  "moderate rain": "O'rtacha yomg'ir",
+  "heavy intensity rain": "Kuchli jala yomg'ir",
+  "very heavy rain": "Kuchli yomg'ir",
+  "thunderstorm": "Momaqaldiroqli bo'ron",
+  "thunderstorm with rain": "Chaqmoq va yomg'ir",
+  "snow": "Qorli havo",
+  "light snow": "Mayda qor yog'ishi",
+  "heavy snow": "Qalin qor yog'ishi",
+  "mist": "Yengil tuman",
+  "fog": "Qalin tuman",
+  "haze": "Xiralashgan havo",
+  "dust": "Chang-to'zon",
+  "drizzle": "Shivalovchi yomg'ir",
+};
+
+function translateDescription(desc: string = "", lang: string = "uz"): string {
+  const lower = desc.toLowerCase().trim();
+  if (lang === "uz") {
+    return UZ_WEATHER_MAP[lower] || desc;
+  }
+  return desc;
+}
+
+// Har bir soat uchun 24 soatlik prognoz yasovchi funksiya
+function generate24HourlyForecast(rawList: any[], baseTemp: number, isC: boolean, lang: string = "uz"): HourlyForecastItem[] {
   const result: HourlyForecastItem[] = [];
   const now = new Date();
 
@@ -17,6 +48,13 @@ function generate24HourlyForecast(rawList: any[], baseTemp: number, isC: boolean
       const isNight = hourVal < 6 || hourVal >= 20;
       const delta = Math.sin((hourVal - 9) / 3.8) * 4;
 
+      const descMap: Record<string, { day: string; night: string }> = {
+        uz: { day: "Quyoshli, ochiq osmon", night: "Musaffo tun" },
+        ru: { day: "Ясно, солнечно", night: "Ясная ночь" },
+        en: { day: "Sunny and clear", night: "Clear night" },
+      };
+      const d = descMap[lang] || descMap.uz;
+
       result.push({
         dt: Math.floor(hourDate.getTime() / 1000),
         time: `${h}:00`,
@@ -24,7 +62,7 @@ function generate24HourlyForecast(rawList: any[], baseTemp: number, isC: boolean
         feels_like: Math.round(baseTemp + delta - 1),
         pop: Math.round(Math.abs(Math.sin(i)) * 20),
         icon: isNight ? "01n" : "01d",
-        description: isNight ? "Ochiq tun" : "Quyoshli havo",
+        description: isNight ? d.night : d.day,
         condition: "Clear",
         wind_speed: +(isC ? 3.0 + (i % 3) * 0.4 : 6.8 + (i % 3)).toFixed(1),
         humidity: Math.round(42 + Math.sin(i) * 12),
@@ -33,7 +71,6 @@ function generate24HourlyForecast(rawList: any[], baseTemp: number, isC: boolean
     return result;
   }
 
-  // OWM dan kelgan real prognoz ma'lumotlari bo'yicha 24 soatni hisoblash
   for (let i = 0; i < 24; i++) {
     const targetTime = now.getTime() + i * 3600 * 1000;
     const targetDt = Math.floor(targetTime / 1000);
@@ -42,7 +79,6 @@ function generate24HourlyForecast(rawList: any[], baseTemp: number, isC: boolean
     const h = hourVal.toString().padStart(2, "0");
     const isNight = hourVal < 6 || hourVal >= 20;
 
-    // targetDt ga eng yaqin bo'lgan OWM nuqtasini topish
     let closestItem = rawList[0];
     let minDiff = Math.abs(rawList[0].dt - targetDt);
 
@@ -54,7 +90,6 @@ function generate24HourlyForecast(rawList: any[], baseTemp: number, isC: boolean
       }
     }
 
-    // Interpolyatsiya uchun oldingi va keyingi nuqtalar
     let prevItem = closestItem;
     let nextItem = closestItem;
     for (let j = 0; j < rawList.length - 1; j++) {
@@ -74,13 +109,15 @@ function generate24HourlyForecast(rawList: any[], baseTemp: number, isC: boolean
     const wind_speed = +(closestItem.wind?.speed || 3.5).toFixed(1);
     const humidity = Math.round(prevItem.main.humidity + (nextItem.main.humidity - prevItem.main.humidity) * factor);
 
-    // Eng yaqin nuqtaning haqiqiy ob-havo holati va tavsifi
     const rawWeather = closestItem.weather?.[0] || {};
     let icon = rawWeather.icon || "01d";
     const condition = rawWeather.main || "Clear";
-    const description = rawWeather.description || "Ochiq";
+    let description = rawWeather.description || "Ochiq";
 
-    // Kunduz / tun holatini soatiga qat'iy moslashtirish (kunduz: d, tun: n)
+    if (lang === "uz") {
+      description = translateDescription(description, "uz");
+    }
+
     const iconCodeNumber = icon.slice(0, 2);
     icon = `${iconCodeNumber}${isNight ? "n" : "d"}`;
 
@@ -101,28 +138,34 @@ function generate24HourlyForecast(rawList: any[], baseTemp: number, isC: boolean
   return result;
 }
 
-function getFallbackData(city: string = "Toshkent", unit: "metric" | "imperial" = "metric"): WeatherResponse {
+function getFallbackData(city: string = "Toshkent", unit: "metric" | "imperial" = "metric", lang: string = "uz"): WeatherResponse {
   const isC = unit === "metric";
   const baseTemp = isC ? 22 : 72;
   const now = Math.floor(Date.now() / 1000);
 
-  const days = ["Yakshanba", "Dushanba", "Seshanba", "Chorshanba", "Payshanba", "Juma", "Shanba"];
-  const currentDayIdx = new Date().getDay();
+  const fallbackDesc: Record<string, string> = {
+    uz: "Quyoshli va musaffo havo",
+    ru: "Ясно и солнечно",
+    en: "Clear and sunny sky",
+  };
 
-  const hourly = generate24HourlyForecast([], baseTemp, isC);
+  const hourly = generate24HourlyForecast([], baseTemp, isC, lang);
 
   const daily: DailyForecastItem[] = Array.from({ length: 5 }).map((_, i) => {
-    const dayName = days[(currentDayIdx + i) % 7];
     const dateObj = new Date(Date.now() + i * 24 * 3600 * 1000);
-    const dateStr = dateObj.toLocaleDateString("uz-UZ", { month: "short", day: "numeric" });
+    const dayIdx = dateObj.getDay();
+    const dateStr = dateObj.toISOString().split("T")[0];
+
     return {
       date: dateStr,
-      dayName: i === 0 ? "Bugun" : dayName,
+      dateRaw: dateStr,
+      dayName: i === 0 ? "Bugun" : "",
+      dayIndex: dayIdx,
       temp_min: Math.round(baseTemp - 5 + i),
       temp_max: Math.round(baseTemp + 4 + i),
       temp_day: Math.round(baseTemp + i),
       condition: i % 2 === 0 ? "Clear" : "Clouds",
-      description: i % 2 === 0 ? "Ochiq havo" : "Bulutli",
+      description: fallbackDesc[lang] || fallbackDesc.uz,
       icon: i % 2 === 0 ? "01d" : "03d",
       humidity: 40 + i * 2,
       wind_speed: isC ? 3.8 : 8.5,
@@ -147,7 +190,7 @@ function getFallbackData(city: string = "Toshkent", unit: "metric" | "imperial" 
       clouds: 15,
       sunrise: now - 18000,
       sunset: now + 21600,
-      description: "Quyoshli va musaffo havo",
+      description: fallbackDesc[lang] || fallbackDesc.uz,
       icon: "01d",
       condition: "Clear",
       dt: now,
@@ -167,11 +210,14 @@ export async function GET(request: NextRequest) {
   const lat = searchParams.get("lat");
   const lon = searchParams.get("lon");
   const unit = (searchParams.get("unit") as "metric" | "imperial") || "metric";
+  const lang = searchParams.get("lang") || "uz";
 
   const isC = unit === "metric";
+  // OWM til parametri
+  const owmLang = lang === "ru" ? "ru" : "en";
 
   if (!API_KEY) {
-    return NextResponse.json(getFallbackData(city || "Toshkent", unit));
+    return NextResponse.json(getFallbackData(city || "Toshkent", unit, lang));
   }
 
   try {
@@ -179,12 +225,12 @@ export async function GET(request: NextRequest) {
     let forecastUrl = "";
 
     if (lat && lon) {
-      currentUrl = `${BASE_URL}/weather?lat=${lat}&lon=${lon}&units=${unit}&appid=${API_KEY}`;
-      forecastUrl = `${BASE_URL}/forecast?lat=${lat}&lon=${lon}&units=${unit}&appid=${API_KEY}`;
+      currentUrl = `${BASE_URL}/weather?lat=${lat}&lon=${lon}&units=${unit}&lang=${owmLang}&appid=${API_KEY}`;
+      forecastUrl = `${BASE_URL}/forecast?lat=${lat}&lon=${lon}&units=${unit}&lang=${owmLang}&appid=${API_KEY}`;
     } else {
       const qCity = city.trim() || "Toshkent";
-      currentUrl = `${BASE_URL}/weather?q=${encodeURIComponent(qCity)}&units=${unit}&appid=${API_KEY}`;
-      forecastUrl = `${BASE_URL}/forecast?q=${encodeURIComponent(qCity)}&units=${unit}&appid=${API_KEY}`;
+      currentUrl = `${BASE_URL}/weather?q=${encodeURIComponent(qCity)}&units=${unit}&lang=${owmLang}&appid=${API_KEY}`;
+      forecastUrl = `${BASE_URL}/forecast?q=${encodeURIComponent(qCity)}&units=${unit}&lang=${owmLang}&appid=${API_KEY}`;
     }
 
     const [currentRes, forecastRes] = await Promise.all([
@@ -193,11 +239,16 @@ export async function GET(request: NextRequest) {
     ]);
 
     if (!currentRes.ok || !forecastRes.ok) {
-      return NextResponse.json(getFallbackData(city || "Toshkent", unit));
+      return NextResponse.json(getFallbackData(city || "Toshkent", unit, lang));
     }
 
     const currentData = await currentRes.json();
     const forecastData = await forecastRes.json();
+
+    let rawDesc = currentData.weather?.[0]?.description || "Ochiq";
+    if (lang === "uz") {
+      rawDesc = translateDescription(rawDesc, "uz");
+    }
 
     const current = {
       city: currentData.name,
@@ -218,7 +269,7 @@ export async function GET(request: NextRequest) {
       clouds: currentData.clouds?.all || 0,
       sunrise: currentData.sys?.sunrise || 0,
       sunset: currentData.sys?.sunset || 0,
-      description: currentData.weather?.[0]?.description || "Ochiq havo",
+      description: rawDesc,
       icon: currentData.weather?.[0]?.icon || "01d",
       condition: currentData.weather?.[0]?.main || "Clear",
       dt: currentData.dt,
@@ -226,12 +277,10 @@ export async function GET(request: NextRequest) {
     };
 
     const rawList = forecastData.list || [];
-    // 24 soatlik to'liq har bir soat uchun hisoblash (har soat o'z ob-havo holati va ikonkasiga ega)
-    const hourly = generate24HourlyForecast(rawList, current.temp, isC);
+    const hourly = generate24HourlyForecast(rawList, current.temp, isC, lang);
 
     // 5 kunlik prognoz guruhlash
     const dailyMap: { [key: string]: any[] } = {};
-    const daysUz = ["Yakshanba", "Dushanba", "Seshanba", "Chorshanba", "Payshanba", "Juma", "Shanba"];
 
     rawList.forEach((item: any) => {
       const dateStr = item.dt_txt.split(" ")[0];
@@ -252,14 +301,21 @@ export async function GET(request: NextRequest) {
       const dateObj = new Date(dateKey);
       const dayIdx = dateObj.getDay();
 
+      let itemDesc = midItem.weather?.[0]?.description || "Ochiq";
+      if (lang === "uz") {
+        itemDesc = translateDescription(itemDesc, "uz");
+      }
+
       return {
-        date: dateObj.toLocaleDateString("uz-UZ", { month: "short", day: "numeric" }),
-        dayName: index === 0 ? "Bugun" : daysUz[dayIdx] || "Kunda",
+        date: dateKey,
+        dateRaw: dateKey,
+        dayName: index === 0 ? "Bugun" : "",
+        dayIndex: dayIdx,
         temp_min: minTemp,
         temp_max: maxTemp,
         temp_day: Math.round(midItem.main.temp),
         condition: midItem.weather?.[0]?.main || "Clear",
-        description: midItem.weather?.[0]?.description || "Ochiq",
+        description: itemDesc,
         icon: midItem.weather?.[0]?.icon || "01d",
         humidity: midItem.main.humidity,
         wind_speed: midItem.wind?.speed || 0,
@@ -279,6 +335,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(response);
   } catch (err) {
     console.error("Weather fetch server error:", err);
-    return NextResponse.json(getFallbackData(city || "Toshkent", unit));
+    return NextResponse.json(getFallbackData(city || "Toshkent", unit, lang));
   }
 }

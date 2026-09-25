@@ -30,7 +30,7 @@ export function WeatherDashboard() {
   // Geolocation
   const { coords, loading: gpsLoading, error: gpsError, getPosition, resetCoords } = useGeolocation();
 
-  // Weather Hook
+  // Weather Hook with dynamic language
   const {
     data,
     loading: weatherLoading,
@@ -44,6 +44,7 @@ export function WeatherDashboard() {
     lon: coords?.lon,
     unit,
     autoRefreshInterval: refreshInterval,
+    lang,
   });
 
   // Favorites Hook
@@ -51,18 +52,15 @@ export function WeatherDashboard() {
 
   // 1. Sayt ishga tushganda avtomatik ravishda Geolocation bo'yicha ma'lumot olish
   useEffect(() => {
-    // Brauzerda geolokatsiyani so'rash
     if (navigator.geolocation) {
-      getPosition().catch(() => {
-        // Ruxsat berilmasa sukut bo'yicha shahar qoladi
-      });
+      getPosition().catch(() => {});
     }
   }, [getPosition]);
 
   // Dark mode & Language persistence
   useEffect(() => {
     try {
-      const savedTheme = localStorage.getItem("auracast_theme");
+      const savedTheme = localStorage.getItem("weatherscope_theme") || localStorage.getItem("auracast_theme");
       const isDarkMode =
         savedTheme === "dark" ||
         (!savedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches);
@@ -73,7 +71,7 @@ export function WeatherDashboard() {
         document.documentElement.classList.remove("dark");
       }
 
-      const savedLang = localStorage.getItem("auracast_lang") as Language;
+      const savedLang = (localStorage.getItem("weatherscope_lang") || localStorage.getItem("auracast_lang")) as Language;
       if (savedLang && (savedLang === "uz" || savedLang === "ru" || savedLang === "en")) {
         setLang(savedLang);
       }
@@ -87,10 +85,10 @@ export function WeatherDashboard() {
       const next = !prev;
       if (next) {
         document.documentElement.classList.add("dark");
-        localStorage.setItem("auracast_theme", "dark");
+        localStorage.setItem("weatherscope_theme", "dark");
       } else {
         document.documentElement.classList.remove("dark");
-        localStorage.setItem("auracast_theme", "light");
+        localStorage.setItem("weatherscope_theme", "light");
       }
       return next;
     });
@@ -99,7 +97,7 @@ export function WeatherDashboard() {
   const handleLanguageChange = (newLang: Language) => {
     setLang(newLang);
     try {
-      localStorage.setItem("auracast_lang", newLang);
+      localStorage.setItem("weatherscope_lang", newLang);
     } catch (e) {
       console.error(e);
     }

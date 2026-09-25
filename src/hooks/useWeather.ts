@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { WeatherResponse, WeatherUnit } from "@/types/weather";
+import { Language } from "@/lib/i18n";
 
 interface UseWeatherProps {
   initialCity?: string;
@@ -9,6 +10,7 @@ interface UseWeatherProps {
   lon?: number | null;
   unit: WeatherUnit;
   autoRefreshInterval: number; // in minutes
+  lang?: Language;
 }
 
 export function useWeather({
@@ -17,6 +19,7 @@ export function useWeather({
   lon,
   unit,
   autoRefreshInterval = 10,
+  lang = "uz",
 }: UseWeatherProps) {
   const [city, setCity] = useState<string>(initialCity);
   const [data, setData] = useState<WeatherResponse | null>(null);
@@ -27,16 +30,19 @@ export function useWeather({
   const unitRef = useRef(unit);
   unitRef.current = unit;
 
+  const langRef = useRef(lang);
+  langRef.current = lang;
+
   const fetchWeather = useCallback(async (cityName?: string, coords?: { lat: number; lon: number }) => {
     setLoading(true);
     setError(null);
     try {
       let query = "";
       if (coords && coords.lat && coords.lon) {
-        query = `lat=${coords.lat}&lon=${coords.lon}&unit=${unitRef.current}`;
+        query = `lat=${coords.lat}&lon=${coords.lon}&unit=${unitRef.current}&lang=${langRef.current}`;
       } else {
         const targetCity = cityName || city;
-        query = `city=${encodeURIComponent(targetCity)}&unit=${unitRef.current}`;
+        query = `city=${encodeURIComponent(targetCity)}&unit=${unitRef.current}&lang=${langRef.current}`;
       }
 
       const res = await fetch(`/api/weather?${query}`);
@@ -54,14 +60,14 @@ export function useWeather({
     }
   }, [city]);
 
-  // Initial fetch or when city/coords/unit changes
+  // Initial fetch or when city/coords/unit/lang changes
   useEffect(() => {
     if (lat && lon) {
       fetchWeather(undefined, { lat, lon });
     } else {
       fetchWeather(city);
     }
-  }, [city, lat, lon, unit, fetchWeather]);
+  }, [city, lat, lon, unit, lang, fetchWeather]);
 
   // Auto refresh interval timer
   useEffect(() => {
